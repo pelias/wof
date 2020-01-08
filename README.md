@@ -1,12 +1,21 @@
 [BETA] This repo is still a work-in-progress.
 
+## Installation
+
+```bash
+npm i -g @whosonfirst/wof
+```
+
 ## CLI
 
-```bas
+```bash
+wof --help
 wof <cmd> [args]
 
 Commands:
+  wof bundle   interact with tar bundles
   wof feature  misc functions for working with feature streams
+  wof fs       interact with files in the filesystem
   wof git      interact with git repositories
   wof sqlite   interact with SQLite databases
 
