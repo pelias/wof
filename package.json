@@ -1,0 +1,49 @@
+{
+  "name": "@whosonfirst/wof",
+  "version": "0.0.0",
+  "description": "WhosOnFirst tools",
+  "main": "index.js",
+  "bin": {
+    "wof": "./bin/wof.js"
+  },
+  "scripts": {
+    "units": "./bin/test unit",
+    "funcs": "./bin/test func",
+    "format_check": "./node_modules/standard/bin/cmd.js",
+    "format_fix": "./node_modules/standard/bin/cmd.js --fix",
+    "test": "./bin/test",
+    "travis": "./bin/test",
+    "validate": "npm ls",
+    "lint": "jshint ."
+  },
+  "author": "pelias",
+  "license": "MIT",
+  "dependencies": {
+    "@turf/bbox": "^6.0.1",
+    "better-sqlite3": "^5.4.3",
+    "convert-array-to-csv": "^1.0.9",
+    "jsonstream2": "^3.0.0",
+    "lodash": "^4.17.15",
+    "mississippi2": "^1.0.5",
+    "require-all": "^3.0.0",
+    "rfc5646": "^3.0.0",
+    "tar-stream": "^2.1.0",
+    "yargs": "^15.1.0"
+  },
+  "devDependencies": {
+    "glob": "^7.1.6",
+    "precommit-hook": "^3.0.0",
+    "standard": "^14.3.1",
+    "tap-spec": "^5.0.0",
+    "tape": "^4.13.0"
+  },
+  "pre-commit": [
+    "format_check",
+    "validate",
+    "test"
+  ],
+  "release": {
+    "branch": "master",
+    "success": []
+  }
+}
