@@ -8,7 +8,7 @@ module.exports.interface = (test) => {
   })
 }
 
-module.exports.fromFeature = (test) => {
+module.exports.fromID = (test) => {
   test('fromID', (t) => {
     t.equal(file.path.fromID(1), '1/1.geojson')
     t.equal(file.path.fromID(12), '12/12.geojson')
@@ -35,6 +35,9 @@ module.exports.fromFeature = (test) => {
     t.equal(file.path.fromID(1234567890, 'example'), '123/456/789/0/1234567890-alt-example.geojson')
     t.end()
   })
+}
+
+module.exports.fromFeature = (test) => {
   test('fromFeature', (t) => {
     t.equal(file.path.fromFeature({ properties: { 'wof:id': 1 } }), '1/1.geojson')
     t.equal(file.path.fromFeature({ properties: { 'wof:id': 12 } }), '12/12.geojson')
