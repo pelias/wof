@@ -44,7 +44,7 @@ module.exports = {
     // create import stream
     process.stdin
       .pipe(stream.json.parse())
-      .pipe(stream.tar.createWriteStream())
+      .pipe(stream.bundle.createWriteStream())
       .pipe(stream.shell.duplex(compressor))
       .pipe(fs.createWriteStream(argv.file))
   }
