@@ -21,6 +21,7 @@
   "dependencies": {
     "@turf/bbox": "^6.0.1",
     "better-sqlite3": "^5.4.3",
+    "combine-streams": "^1.0.0",
     "csv-write-stream": "^2.0.0",
     "jsonstream2": "^3.0.0",
     "lodash": "^4.17.15",
