@@ -6,6 +6,25 @@
 npm i -g @whosonfirst/wof
 ```
 
+## Dependencies
+
+To avoid reinventing the wheel, some code in this repo will 'shell out' to execute a common *nix command line application instead of native javascript code.
+
+Ideally we'd like to only depend on utilities which come standard on most *nix systems, but it might be the case that your environment lacks one or more of these programs:
+
+```bash
+# check dependencies
+which cat find node git bzip2 gzip pv bsdtar
+```
+
+```bash
+# ubuntu
+sudo apt-get install git bzip2 gzip pv libarchive-tools
+
+# mac OSX
+brew install git bzip2 gzip pv libarchive
+```
+
 ## CLI
 
 ```bash
