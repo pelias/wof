@@ -22,7 +22,7 @@ module.exports = {
   handler: (argv) => {
     let args = [argv.path, '-type', 'f', '-name', '*.geojson']
     if (!argv.alt) { args = [...args, '!', '-name', '*-alt-*'] }
-    args = [...args, '-exec', 'cat', '{}', '\\;'] // print contents instead of filenames
+    args = [...args, '-exec', 'cat', '{}', ';'] // print contents instead of filenames
 
     // create export stream
     stream.find(...args)
