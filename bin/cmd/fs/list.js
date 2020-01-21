@@ -37,9 +37,9 @@ module.exports = {
 
     // path normalization
     if (argv.normalization === 'realpath') {
-      args = [...args, '-exec', 'realpath', '--relative-to', argv.path, '{}', '\\;']
+      args = [...args, '-exec', 'realpath', '--relative-to', argv.path, '{}', ';']
     } else if (argv.normalization === 'basename') {
-      args = [...args, '-exec', 'basename', '{}', '\\;']
+      args = [...args, '-exec', 'basename', '{}', ';']
     }
 
     // create export stream
