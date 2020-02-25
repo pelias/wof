@@ -20,6 +20,16 @@ module.exports = {
       alias: 'rm',
       describe: 'Delete db file before import if it already exists.'
     })
+    yargs.option('collection', {
+      type: 'string',
+      default: undefined,
+      describe: `Name of the collection, such as 'whosonfirst-data' or 'whosonfirst-data-macroregion'`
+    })
+    yargs.option('version', {
+      type: 'string',
+      default: undefined,
+      describe: `Name of the version, such as 'latest' or '1535390738'`
+    })
   },
   handler: (argv) => {
     // auto-detect format
@@ -44,7 +54,7 @@ module.exports = {
     // create import stream
     process.stdin
       .pipe(stream.json.parse())
-      .pipe(stream.bundle.createWriteStream())
+      .pipe(stream.bundle.createWriteStream({ collection: argv.collection, version: argv.version }))
       .pipe(stream.shell.duplex(compressor))
       .pipe(fs.createWriteStream(argv.file))
   }
