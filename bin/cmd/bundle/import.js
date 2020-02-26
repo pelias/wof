@@ -25,10 +25,10 @@ module.exports = {
       default: undefined,
       describe: `Name of the collection, such as 'whosonfirst-data' or 'whosonfirst-data-macroregion'`
     })
-    yargs.option('version', {
+    yargs.option('vintage', {
       type: 'string',
       default: undefined,
-      describe: `Name of the version, such as 'latest' or '1535390738'`
+      describe: `Name of the vintage, such as 'latest' or '1535390738'`
     })
   },
   handler: (argv) => {
@@ -54,7 +54,7 @@ module.exports = {
     // create import stream
     process.stdin
       .pipe(stream.json.parse())
-      .pipe(stream.bundle.createWriteStream({ collection: argv.collection, version: argv.version }))
+      .pipe(stream.bundle.createWriteStream({ collection: argv.collection, vintage: argv.vintage }))
       .pipe(stream.shell.duplex(compressor))
       .pipe(fs.createWriteStream(argv.file))
   }

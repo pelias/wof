@@ -14,14 +14,14 @@ const streamOptions = { objectMode: true, autoDestroy: true }
 /**
 * options:
 * - 'collection' name of the collection, such as 'whosonfirst-data' or 'whosonfirst-data-macroregion'
-* - 'version' name of the version, such as 'latest' or '1535390738'
+* - 'vintage' name of the vintage, such as 'latest' or '1535390738'
 * - 'nometa' set to true to disable generation of meta files (default: false)
 */
 module.exports.createWriteStream = (options) => {
   // assign default options
   _.defaults(options, {
     collection: convention.default.collection,
-    version: convention.default.version,
+    vintage: convention.default.vintage,
     nometa: false
   })
 
@@ -79,7 +79,7 @@ module.exports.createWriteStream = (options) => {
 
         // write CSV meta files
         // @todo: try getting this to work with pure streams?
-        const metaFilename = convention.metaFilename(options.collection, placetype, options.version)
+        const metaFilename = convention.metaFilename(options.collection, placetype, options.vintage)
         const header = { name: path.join('meta', metaFilename) }
         pack.entry(header, fs.readFileSync(store.path))
 
