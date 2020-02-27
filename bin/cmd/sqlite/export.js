@@ -24,7 +24,7 @@ module.exports = {
   handler: (argv) => {
     // connect to database
     if (argv.verbose) { console.error(`open ${argv.database}`) }
-    const db = Database(argv.database)
+    const db = Database(argv.database, { readonly: true })
 
     // fast mode
     if (argv.fast) {
