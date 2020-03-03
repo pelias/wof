@@ -9,13 +9,15 @@ const options = {
   read: { autoDestroy: true }
 }
 
-module.exports.createWriteStream = (db) => {
+module.exports.createWriteStream = (db, opts) => {
+  _.defaults(opts, { alt: true })
+
   // generate insert statements for each table
   const stmts = _.map(table, t => t.insert(db))
 
   return miss.through(options.write, (feat, enc, next) => {
     // skip alt geometries
-    if (feature.isAltGeometry(feat)) { return next() }
+    if (!opts.alt && feature.isAltGeometry(feat)) { return next() }
 
     try {
       // insert document in each table

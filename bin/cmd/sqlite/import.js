@@ -32,8 +32,14 @@ module.exports = {
       alias: 'rm',
       describe: 'Delete db file before import if it already exists.'
     })
+    yargs.option('alt', {
+      type: 'boolean',
+      default: true,
+      describe: 'Include alt-geometries.'
+    })
   },
   handler: (argv) => {
+
     // unlink db
     if (argv.unlink) {
       if (argv.verbose) { console.error(`unlink ${argv.database}`) }
@@ -52,13 +58,13 @@ module.exports = {
 
     // create tables/indices
     if (argv.schema) {
-      if (argv.verbose) { console.error('creating tables & indices which don\'t exist') }
+      if (argv.verbose) { console.error(`creating tables & indices which don't exist`) }
       sqlite.schema(db)
     }
 
     // create import stream
     process.stdin
       .pipe(stream.json.parse())
-      .pipe(stream.sqlite.createWriteStream(db))
+      .pipe(stream.sqlite.createWriteStream(db, { alt: argv.alt }))
   }
 }
