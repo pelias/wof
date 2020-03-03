@@ -40,7 +40,7 @@ module.exports.createReadStream = (db, opts) => {
     var ok = true
     while (ok) {
       const elt = iterator.next()
-      if (!elt.done) { ok = next(null, elt.value.body) } else { next(null, null); break }
+      if (!elt.done) { ok = next(null, _.find(elt.value)) } else { next(null, null); break }
     }
   })
 }
