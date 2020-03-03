@@ -13,6 +13,7 @@ module.exports.write = (db) => {
 
 // improve query-time performance
 module.exports.read = (db) => {
+  db.prepare('PRAGMA journal_mode=OFF').run()
   db.prepare('PRAGMA locking_mode=NORMAL').get()
   db.prepare('PRAGMA synchronous=OFF').run()
   db.prepare('PRAGMA mmap_size=268435456').get()
