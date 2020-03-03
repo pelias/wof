@@ -20,6 +20,12 @@ module.exports = {
       default: true,
       describe: 'Apply potentially unsafe PRAGMA settings to speed up exports.'
     })
+
+    yargs.option('sql', {
+      type: 'string',
+      default: 'SELECT body FROM geojson',
+      describe: 'SQL statement to use for export.'
+    })
   },
   handler: (argv) => {
     // connect to database
@@ -33,7 +39,7 @@ module.exports = {
     }
 
     // create export stream
-    stream.sqlite.createReadStream(db)
+    stream.sqlite.createReadStream(db, { sql: argv.sql })
       .pipe(process.stdout)
   }
 }

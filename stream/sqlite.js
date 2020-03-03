@@ -28,8 +28,10 @@ module.exports.createWriteStream = (db) => {
   })
 }
 
-module.exports.createReadStream = (db) => {
-  const stmt = db.prepare('SELECT body FROM geojson')
+module.exports.createReadStream = (db, opts) => {
+  _.defaults(opts, { sql: 'SELECT body FROM geojson' })
+
+  const stmt = db.prepare(opts.sql)
   const iterator = stmt.iterate()
 
   return miss.from(options.read, (size, next) => {
