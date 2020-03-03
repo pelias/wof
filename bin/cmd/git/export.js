@@ -34,8 +34,7 @@ module.exports = {
     if (!argv.alt) { args = [...args, '--exclude', '*-alt-*'] }
 
     // create export stream
-    stream.git.archive(argv.repo, argv.tree, argv.path)
-      .pipe(stream.bsdtar.extract(...args))
+    stream.git.archive(argv.repo, argv.tree, argv.path, args)
       .pipe(process.stdout)
   }
 }
