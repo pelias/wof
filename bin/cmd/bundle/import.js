@@ -34,6 +34,7 @@ module.exports = {
   handler: (argv) => {
     // auto-detect format
     let compressor
+    // @todo add support for lbzip2 and pigz
     if (argv.file.endsWith('tar.bz2')) { compressor = 'bzip2' }
     if (argv.file.endsWith('tar.gz')) { compressor = 'gzip' }
     if (argv.file.endsWith('tar')) { compressor = 'cat' }

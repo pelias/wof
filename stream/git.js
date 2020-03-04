@@ -26,8 +26,7 @@ module.exports.archive = (dir, tree, filterPath, args) => {
   return miss.pipeline(
     shell.duplex(
       'git',
-      [`--git-dir=${dir}`, 'archive', tree, filterPath],
-      { stdio: ['ignore', 'pipe', 'inherit'] }
+      [`--git-dir=${dir}`, 'archive', tree, filterPath]
     ),
     bsdtar.extract(...args)
   )
