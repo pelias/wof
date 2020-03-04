@@ -66,6 +66,7 @@ function spawnDuplex(cmd, args, options) {
   proc.stdout.pipe(B)
 
   // do not discard stderr stream, send to process
+  process.stderr.setMaxListeners(process.stderr.getMaxListeners() + 1)
   proc.stderr.pipe(process.stderr)
 
   proc.on('error', (err) => {
