@@ -26,7 +26,7 @@ function spawnDuplex(cmd, args, options) {
     return A.write(chunk, encoding, cb)
   }
 
-  AB.on('finish', () => {
+  AB.once('finish', () => {
     A.end()
   })
 
@@ -40,13 +40,13 @@ function spawnDuplex(cmd, args, options) {
 
   B.on('readable', () => {
     // send SIGSTOP to handle backpressure
-    if (!AB.push(B.read()) && !SIGSTOP){
+    if (!AB.push(B.read()) && !SIGSTOP) {
       SIGSTOP = true
       proc.kill('SIGSTOP')
     }
   })
 
-  B.on('end', () => {
+  B.once('end', () => {
     AB.push(null)
   })
 
