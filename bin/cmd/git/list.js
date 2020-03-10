@@ -1,6 +1,4 @@
-const path = require('path')
-const all = require('require-all')
-const stream = all(path.join(__dirname, '../../../stream'))
+const stream = { git: require('../../../stream/git') }
 
 module.exports = {
   command: 'list <repo>',

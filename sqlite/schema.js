@@ -1,6 +1,11 @@
 const _ = require('lodash')
-const path = require('path')
-const table = require('require-all')(path.join(__dirname, 'table'))
+const table = {
+  ancestors: require('./table/ancestors'),
+  concordances: require('./table/concordances'),
+  geojson: require('./table/geojson'),
+  names: require('./table/names'),
+  spr: require('./table/spr'),
+}
 
 module.exports = (db) => {
   _.each(table, (t) => {

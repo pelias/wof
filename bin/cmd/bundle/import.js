@@ -1,7 +1,9 @@
 const fs = require('fs')
-const path = require('path')
-const all = require('require-all')
-const stream = all(path.join(__dirname, '../../../stream'))
+const stream = {
+  json: require('../../../stream/json'),
+  bundle: require('../../../stream/bundle'),
+  shell: require('../../../stream/shell')
+}
 
 module.exports = {
   command: 'import <file>',

@@ -1,8 +1,14 @@
 const _ = require('lodash')
-const path = require('path')
 const miss = require('mississippi2')
 const feature = require('../whosonfirst/feature')
-const table = require('require-all')(path.join(__dirname, '../sqlite/table'))
+
+const table = {
+  ancestors: require('../sqlite/table/ancestors'),
+  concordances: require('../sqlite/table/concordances'),
+  geojson: require('../sqlite/table/geojson'),
+  names: require('../sqlite/table/names'),
+  spr: require('../sqlite/table/spr'),
+}
 
 const options = {
   write: { objectMode: true, autoDestroy: true },

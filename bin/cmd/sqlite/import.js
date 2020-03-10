@@ -1,8 +1,12 @@
 const fs = require('fs')
-const path = require('path')
-const all = require('require-all')
-const stream = all(path.join(__dirname, '../../../stream'))
-const sqlite = all(path.join(__dirname, '../../../sqlite'))
+const stream = {
+  json: require('../../../stream/json'),
+  sqlite: require('../../../stream/sqlite')
+}
+const sqlite = {
+  pragma: require('../../../sqlite/pragma'),
+  schema: require('../../../sqlite/schema')
+}
 const Database = require('better-sqlite3')
 
 module.exports = {

@@ -1,7 +1,5 @@
 const _ = require('lodash')
-const path = require('path')
-const all = require('require-all')
-const stream = all(path.join(__dirname, '../../../stream'))
+const stream = { json: require('../../../stream/json') }
 
 module.exports = {
   command: 'properties',
