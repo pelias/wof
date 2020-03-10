@@ -19,6 +19,9 @@ module.exports.insert = (db) => {
   `)
 
   return (feat) => {
+    // table does not support alt geometries
+    if (feature.isAltGeometry(feat)) { return }
+
     const concordances = _.get(feat, 'properties.wof:concordances', [])
 
     const common = {

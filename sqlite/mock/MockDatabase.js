@@ -1,10 +1,10 @@
 const MockStatement = require('./MockStatement')
 
 class MockDatabase {
-  constructor() { this.pragmas = [] }
+  constructor() { this.stmt = [] }
   prepare(sql) {
     const stmt = new MockStatement(sql)
-    this.pragmas.push(stmt)
+    this.stmt.push(stmt)
     return stmt
   }
 }

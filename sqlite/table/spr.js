@@ -1,4 +1,5 @@
 const spr = require('../../whosonfirst/spr')
+const feature = require('../../whosonfirst/feature')
 
 module.exports.create = (db) => {
   db.prepare(`
@@ -44,6 +45,9 @@ module.exports.insert = (db) => {
   `)
 
   return (feat) => {
+    // table does not support alt geometries
+    if (feature.isAltGeometry(feat)) { return }
+
     stmt.run(spr(feat))
   }
 }

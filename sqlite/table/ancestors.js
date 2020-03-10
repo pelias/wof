@@ -19,6 +19,9 @@ module.exports.insert = (db) => {
   `)
 
   return (feat) => {
+    // table does not support alt geometries
+    if (feature.isAltGeometry(feat)) { return }
+
     const hierarchies = _.get(feat, 'properties.wof:hierarchy', [])
 
     const common = {

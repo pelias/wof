@@ -1,10 +1,15 @@
 class MockStatement {
   constructor(sql) {
-    this.sql = sql
-    this.action = 'none'
+    this.sql = sql.replace(/\n/g, ' ').replace(/\s{2,}/g, ' ')
+    this.action = {
+      run: [],
+      get: [],
+      all: []
+    }
   }
-  run() { this.action = 'run' }
-  get() { this.action = 'get' }
+  run(...args) { this.action.run.push(args) }
+  get(...args) { this.action.get.push(args) }
+  all(...args) { this.action.all.push(args) }
 }
 
 module.exports = MockStatement

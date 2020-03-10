@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const LanguageTag = require('rfc5646')
 const feature = require('../../whosonfirst/feature')
+const privateUseRegex = /^(.*)[_-]x[_-]([a-z]*)$/
 
 module.exports.create = (db) => {
   db.prepare(`
@@ -34,6 +35,9 @@ module.exports.insert = (db) => {
   `)
 
   return (feat) => {
+    // table does not support alt geometries
+    if (feature.isAltGeometry(feat)) { return }
+
     const properties = _.get(feat, 'properties', {})
 
     const common = {
@@ -57,7 +61,7 @@ module.exports.insert = (db) => {
           region: tag.region,
           variant: tag.variant,
           extension: '',
-          privateuse: tag.privateuse.toString().replace(/^x-?/, ''),
+          privateuse: privateUseRegex.test(key) ? key.replace(privateUseRegex, '$2') : '',
           name: name
         }, common))
       })
