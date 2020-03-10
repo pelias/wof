@@ -37,9 +37,6 @@ module.exports.createWriteStream = (options) => {
     const header = { name: path.join('data', file.path.fromFeature(feat)) }
     if (lastmodified > 0) { header.mtime = new Date(feature.getLastModified(feat) * 1000) }
 
-    // add file to archive
-    pack.entry(header, JSON.stringify(feat))
-
     // generate meta file(s)
     // note: temp files are used to avoid storing in RAM
     if (options.nometa !== true) {
@@ -64,7 +61,8 @@ module.exports.createWriteStream = (options) => {
       }
     }
 
-    next()
+    // add file to archive
+    pack.entry(header, JSON.stringify(feat), next)
   }
 
   // called at the end
