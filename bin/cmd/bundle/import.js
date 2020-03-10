@@ -1,4 +1,5 @@
 const fs = require('fs')
+const hasBin = require('command-exists').sync
 const stream = {
   json: require('../../../stream/json'),
   bundle: require('../../../stream/bundle'),
@@ -37,8 +38,8 @@ module.exports = {
     // auto-detect format
     let compressor
     // @todo add support for lbzip2 and pigz
-    if (argv.file.endsWith('tar.bz2')) { compressor = 'bzip2' }
-    if (argv.file.endsWith('tar.gz')) { compressor = 'gzip' }
+    if (argv.file.endsWith('tar.bz2')) { compressor = hasBin('lbzip2') ? 'lbzip2' : 'bzip2' }
+    if (argv.file.endsWith('tar.gz')) { compressor = hasBin('pigz') ? 'pigz' : 'gzip' }
     if (argv.file.endsWith('tar')) { compressor = 'cat' }
     if (!compressor) {
       console.error(`unsupported file extension: ${argv.file}`)
