@@ -89,7 +89,34 @@ module.exports.insert = (test) => {
     t.deepEquals(db.stmt[0].action.run[0], [{
       id: -1,
       body: '{"type":"Feature","properties":{"src:alt_label":"test"},"geometry":{"type":"Point","coordinates":[0,0]}}',
-      source: 'unknown',
+      source: 'test',
+      is_alt: 1,
+      lastmodified: -1
+    }])
+
+    t.end()
+  })
+  // https://github.com/whosonfirst-data/whosonfirst-data/issues/1834
+  test('insert - prefer the src:alt_label over src:geom when both available', (t) => {
+    const db = new MockDatabase()
+    const insert = geojson.insert(db)
+
+    insert({
+      type: 'Feature',
+      properties: {
+        'src:alt_label': 'test2',
+        'src:geom': 'test'
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [0, 0]
+      }
+    })
+
+    t.deepEquals(db.stmt[0].action.run[0], [{
+      id: -1,
+      body: '{"type":"Feature","properties":{"src:alt_label":"test2","src:geom":"test"},"geometry":{"type":"Point","coordinates":[0,0]}}',
+      source: 'test2',
       is_alt: 1,
       lastmodified: -1
     }])
