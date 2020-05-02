@@ -9,13 +9,14 @@ feature.get = _.get
 
 feature.getID = (feat) => _.get(feat, 'properties.wof:id', -1)
 feature.getPlacetype = (feat) => _.get(feat, 'properties.wof:placetype', 'unknown')
-feature.getSource = (feat) => _.get(feat, 'properties.src:geom', 'unknown')
+feature.getSource = (feat) => feature.getAltLabel(feat) || feature.getGeomSource(feat)
 feature.getParentId = (feat) => _.get(feat, 'properties.wof:parent_id', -1)
 feature.getName = (feat) => _.get(feat, 'properties.wof:name', '')
 feature.getCountry = (feat) => _.get(feat, 'properties.wof:country', 'XX')
 feature.getISO = (feat) => _.get(feat, 'properties.iso:country', 'XX')
 feature.getRepo = (feat) => _.get(feat, 'properties.wof:repo', 'whosonfirst-data-xx')
 feature.getAltLabel = (feat) => _.get(feat, 'properties.src:alt_label')
+feature.getGeomSource = (feat) => _.get(feat, 'properties.src:geom', 'unknown')
 
 feature.getIsCurrent = (feat) => _.get(feat, 'properties.mz:is_current', -1)
 feature.getDeprecated = (feat) => _.get(feat, 'properties.edtf:deprecated', 'uuuu')

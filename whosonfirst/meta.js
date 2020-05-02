@@ -28,7 +28,7 @@ module.exports = (feat) => {
     path: file.path.fromFeature(feat),
     placetype: feature.getPlacetype(feat),
     region_id: getHierarchyID(feat, 'region'),
-    source: feature.getSource(feat),
+    source: feature.getGeomSource(feat),
     superseded_by: feature.getSupersededBy(feat).join(','),
     supersedes: feature.getSupersedes(feat).join(','),
     wof_country: feature.getCountry(feat)
