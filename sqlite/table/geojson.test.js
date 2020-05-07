@@ -1,4 +1,5 @@
 const geojson = require('./geojson')
+const Database = require('better-sqlite3')
 const MockDatabase = require('../mock/MockDatabase')
 
 module.exports.interface = (test) => {
@@ -65,13 +66,14 @@ module.exports.insert = (test) => {
       id: -1,
       body: '{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[0,0]}}',
       source: 'unknown',
+      alt_label: undefined,
       is_alt: 0,
       lastmodified: -1
     }])
 
     t.end()
   })
-  test('insert - do insert alt geometries', (t) => {
+  test('insert - insert alt geometries', (t) => {
     const db = new MockDatabase()
     const insert = geojson.insert(db)
 
@@ -89,7 +91,8 @@ module.exports.insert = (test) => {
     t.deepEquals(db.stmt[0].action.run[0], [{
       id: -1,
       body: '{"type":"Feature","properties":{"src:alt_label":"test"},"geometry":{"type":"Point","coordinates":[0,0]}}',
-      source: 'test',
+      source: 'unknown',
+      alt_label: 'test',
       is_alt: 1,
       lastmodified: -1
     }])
@@ -116,11 +119,46 @@ module.exports.insert = (test) => {
     t.deepEquals(db.stmt[0].action.run[0], [{
       id: -1,
       body: '{"type":"Feature","properties":{"src:alt_label":"test2","src:geom":"test"},"geometry":{"type":"Point","coordinates":[0,0]}}',
-      source: 'test2',
+      source: 'test',
+      alt_label: 'test2',
       is_alt: 1,
       lastmodified: -1
     }])
 
+    t.end()
+  })
+  // https://github.com/whosonfirst/go-whosonfirst-sqlite-features/issues/7
+  test('insert - improved unique constraint', (t) => {
+    const db = new Database('/tmp/foo', { memory: true })
+    geojson.create(db)
+    geojson.createIndices(db)
+
+    const insert = geojson.insert(db)
+
+    insert({
+      type: 'Feature',
+      properties: {
+        'src:alt_label': 'whosonfirst',
+        'src:geom': 'whosonfirst'
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [0, 0]
+      }
+    })
+
+    insert({
+      type: 'Feature',
+      properties: {
+        'src:geom': 'whosonfirst'
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [0, 0]
+      }
+    })
+
+    t.equals(2, db.prepare('SELECT COUNT(*) AS count FROM geojson').get().count)
     t.end()
   })
 }

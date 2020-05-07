@@ -7,6 +7,7 @@ module.exports.create = (db) => {
       id INTEGER NOT NULL,
       body TEXT,
       source TEXT,
+      alt_label TEXT,
       is_alt BOOLEAN,
       lastmodified INTEGER
   )`).run()
@@ -15,8 +16,8 @@ module.exports.create = (db) => {
 module.exports.insert = (db) => {
   const stmt = db.prepare(`
     INSERT OR IGNORE
-    INTO geojson (id, body, source, is_alt, lastmodified)
-    VALUES (:id, :body, :source, :is_alt, :lastmodified)
+    INTO geojson (id, body, source, alt_label, is_alt, lastmodified)
+    VALUES (:id, :body, :source, :alt_label, :is_alt, :lastmodified)
   `)
 
   return (feat) => {
@@ -24,6 +25,7 @@ module.exports.insert = (db) => {
       id: feature.getID(feat),
       body: codec.encode(feat),
       source: feature.getSource(feat),
+      alt_label: feature.getAltLabel(feat),
       is_alt: feature.isAltGeometry(feat) ? 1 : 0,
       lastmodified: feature.getLastModified(feat)
     })
@@ -35,7 +37,7 @@ module.exports.drop = (db) => {
 }
 
 module.exports.createIndices = (db) => {
-  db.prepare('CREATE UNIQUE INDEX IF NOT EXISTS geojson_by_id ON geojson (id, source)').run()
+  db.prepare('CREATE UNIQUE INDEX IF NOT EXISTS geojson_by_id ON geojson (id, source, alt_label)').run()
   db.prepare('CREATE INDEX IF NOT EXISTS geojson_by_alt ON geojson (id, is_alt)').run()
   db.prepare('CREATE INDEX IF NOT EXISTS geojson_by_lastmod ON geojson (lastmodified)').run()
 }
