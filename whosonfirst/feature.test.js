@@ -7,7 +7,6 @@ module.exports.interface = (test) => {
   })
 }
 
-// https://github.com/whosonfirst-data/whosonfirst-data/issues/1834
 module.exports.getSource = (test) => {
   test('getSource', (t) => {
     t.equal('unknown', feature.getSource({}))
@@ -16,9 +15,23 @@ module.exports.getSource = (test) => {
         'src:geom': 'GEOM_SRC'
       }
     }))
-    t.equal('ALT_LABEL', feature.getSource({
+
+    // return src:geom even when src:alt_label available
+    t.equal('GEOM_SRC', feature.getSource({
       properties: {
         'src:geom': 'GEOM_SRC',
+        'src:alt_label': 'ALT_LABEL'
+      }
+    }))
+    t.end()
+  })
+}
+
+module.exports.getAltLabel = (test) => {
+  test('getAltLabel', (t) => {
+    t.false(feature.getAltLabel({}))
+    t.equal('ALT_LABEL', feature.getAltLabel({
+      properties: {
         'src:alt_label': 'ALT_LABEL'
       }
     }))

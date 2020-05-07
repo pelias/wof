@@ -9,7 +9,7 @@ feature.get = _.get
 
 feature.getID = (feat) => _.get(feat, 'properties.wof:id', -1)
 feature.getPlacetype = (feat) => _.get(feat, 'properties.wof:placetype', 'unknown')
-feature.getSource = (feat) => feature.getAltLabel(feat) || feature.getGeomSource(feat)
+feature.getSource = (feat) => feature.getGeomSource(feat)
 feature.getParentId = (feat) => _.get(feat, 'properties.wof:parent_id', -1)
 feature.getName = (feat) => _.get(feat, 'properties.wof:name', '')
 feature.getCountry = (feat) => _.get(feat, 'properties.wof:country', 'XX')
