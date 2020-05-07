@@ -16,8 +16,8 @@ module.exports.archive = (dir, tree, filterPath, args) => {
   const topLevelDirs = child.execSync(directoryListing).toString().trim().split('\n')
 
   // no data dire present, return no-op stream
-  if (!topLevelDirs.includes('data')){
-    console.error(`directory 'data' not found in git archive, skipping`)
+  if (!topLevelDirs.includes('data')) {
+    console.error('directory \'data\' not found in git archive, skipping')
     return miss.through()
   }
 

@@ -43,7 +43,6 @@ module.exports = {
     })
   },
   handler: (argv) => {
-
     // unlink db
     if (argv.unlink) {
       if (argv.verbose) { console.error(`unlink ${argv.database}`) }
@@ -62,7 +61,7 @@ module.exports = {
 
     // create tables/indices
     if (argv.schema) {
-      if (argv.verbose) { console.error(`creating tables & indices which don't exist`) }
+      if (argv.verbose) { console.error('creating tables & indices which don\'t exist') }
       sqlite.schema(db)
     }
 

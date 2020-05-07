@@ -9,5 +9,5 @@ module.exports.extract = (...args) => shell.duplex(
 // the bash-foo is used in order to 'switch' stderr and stderr streams
 module.exports.list = (...args) => shell.duplex(
   'bash',
-  ['-c', `set -o noglob; 3>&1 1>&2 2>&3 bsdtar -tOf - ` + args.join(' ')]
+  ['-c', 'set -o noglob; 3>&1 1>&2 2>&3 bsdtar -tOf - ' + args.join(' ')]
 )

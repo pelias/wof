@@ -67,11 +67,9 @@ module.exports.createWriteStream = (options) => {
 
   // called at the end
   const flush = (done) => {
-
     // write meta file(s)
     if (options.nometa !== true) {
       _.each(metadata, (store, placetype) => {
-
         // end writing to file
         store.writable.end()
 

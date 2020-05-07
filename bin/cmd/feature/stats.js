@@ -4,11 +4,11 @@ const feature = require('../../../whosonfirst/feature')
 const geometry = require('../../../whosonfirst/geometry')
 
 const statuses = {
-  'current': feature.isCurrent,
-  'deprecated': feature.isDeprecated,
-  'ceased': feature.isCeased,
-  'superseded': feature.isSuperseded,
-  'superseding': feature.isSuperseding,
+  current: feature.isCurrent,
+  deprecated: feature.isDeprecated,
+  ceased: feature.isCeased,
+  superseded: feature.isSuperseded,
+  superseding: feature.isSuperseding
 }
 
 // convenience function for incrementing a possibly non-existent key
@@ -25,7 +25,6 @@ module.exports = {
     // generate stats
     process.stdin
       .pipe(stream.json.through((feat, enc, next) => {
-
         // alt geometry stats
         if (feature.isAltGeometry(feat)) {
           const label = feature.getAltLabel(feat)
@@ -82,10 +81,10 @@ module.exports = {
           Math.min(stats.geometry.bbox[1], bbox[1]),
           Math.max(stats.geometry.bbox[2], bbox[2]),
           Math.max(stats.geometry.bbox[3], bbox[3])
-        ];
+        ]
 
         // null island
-        if (0 === bbox.reduce((acc, cur) => acc + cur)) {
+        if (bbox.reduce((acc, cur) => acc + cur) === 0) {
           increment(stats, 'null.geometry')
         }
 
