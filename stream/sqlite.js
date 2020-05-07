@@ -7,7 +7,7 @@ const table = {
   concordances: require('../sqlite/table/concordances'),
   geojson: require('../sqlite/table/geojson'),
   names: require('../sqlite/table/names'),
-  spr: require('../sqlite/table/spr'),
+  spr: require('../sqlite/table/spr')
 }
 
 const options = {

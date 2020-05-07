@@ -4,7 +4,7 @@ const table = {
   concordances: require('./table/concordances'),
   geojson: require('./table/geojson'),
   names: require('./table/names'),
-  spr: require('./table/spr'),
+  spr: require('./table/spr')
 }
 
 module.exports = (db) => {

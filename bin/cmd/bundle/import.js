@@ -26,12 +26,12 @@ module.exports = {
     yargs.option('collection', {
       type: 'string',
       default: undefined,
-      describe: `Name of the collection, such as 'whosonfirst-data' or 'whosonfirst-data-macroregion'`
+      describe: 'Name of the collection, such as \'whosonfirst-data\' or \'whosonfirst-data-macroregion\''
     })
     yargs.option('vintage', {
       type: 'string',
       default: undefined,
-      describe: `Name of the vintage, such as 'latest' or '1535390738'`
+      describe: 'Name of the vintage, such as \'latest\' or \'1535390738\''
     })
   },
   handler: (argv) => {

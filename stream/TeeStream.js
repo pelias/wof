@@ -5,17 +5,17 @@
  * Module dependencies.
  */
 
-var stream = require('stream');
-var Writable = stream.Writable;
-var PassThrough = stream.PassThrough;
-var inherits = require('util').inherits;
-var debug = require('debug')('stream:tee');
+var stream = require('stream')
+var Writable = stream.Writable
+var PassThrough = stream.PassThrough
+var inherits = require('util').inherits
+var debug = require('debug')('stream:tee')
 
 /**
  * Module exports.
  */
 
-module.exports = Tee;
+module.exports = Tee
 
 /**
  * The `Tee` class is a writable stream that you write data to. Then when you want
@@ -27,12 +27,12 @@ module.exports = Tee;
  * @api public
  */
 
-function Tee(opts) {
-  if (!(this instanceof Tee)) return new Tee(opts);
-  Writable.call(this, opts);
-  this.streams = [];
+function Tee (opts) {
+  if (!(this instanceof Tee)) return new Tee(opts)
+  Writable.call(this, opts)
+  this.streams = []
 }
-inherits(Tee, Writable);
+inherits(Tee, Writable)
 
 /**
  * Creates and returns a new PassThrough stream instance for this Tee instance.
@@ -43,29 +43,29 @@ inherits(Tee, Writable);
  */
 
 Tee.prototype.fork = function (opts) {
-  var stream = new PassThrough(opts);
-  this.streams.push(stream);
+  var stream = new PassThrough(opts)
+  this.streams.push(stream)
   this.on('finish', () => stream.end())
-  return stream;
-};
+  return stream
+}
 
 /**
  * The base Writable class' `_write()` implementation.
  */
 
 Tee.prototype._write = function (chunk, enc, done) {
-  var count = this.streams.length;
-  debug('_write() (%d bytes, %d streams)', chunk.length, count);
+  var count = this.streams.length
+  debug('_write() (%d bytes, %d streams)', chunk.length, count)
   this.streams.forEach((stream, i) => {
-    if (false === stream.write(chunk, enc)) {
-      debug('need to wait for "drain" for stream %d', i);
+    if (stream.write(chunk, enc) === false) {
+      debug('need to wait for "drain" for stream %d', i)
       stream.once('drain', function () {
-        debug('got "drain" event for stream %d', i);
-        --count || done();
-      });
+        debug('got "drain" event for stream %d', i)
+        --count || done()
+      })
     } else {
-      --count;
+      --count
     }
-  });
-  if (0 === count) done();
-};
+  })
+  if (count === 0) done()
+}

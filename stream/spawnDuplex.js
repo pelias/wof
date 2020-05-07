@@ -12,8 +12,7 @@ const streamOptions = {
   // highWaterMark: 1e+6 // 1MB
 }
 
-function spawnDuplex(cmd, args, options) {
-
+function spawnDuplex (cmd, args, options) {
   const AB = new Stream.Duplex(streamOptions)
   const A = new Stream.PassThrough(streamOptions)
   const B = new Stream.PassThrough(streamOptions)

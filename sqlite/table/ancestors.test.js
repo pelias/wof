@@ -57,12 +57,12 @@ module.exports.insert = (test) => {
       properties: {
         'wof:hierarchy': [
           {
-            'continent_id': 102191581,
-            'country_id': 85632343,
-            'locality_id': 101851343,
-            'region_id': 85667945
+            continent_id: 102191581,
+            country_id: 85632343,
+            locality_id: 101851343,
+            region_id: 85667945
           }
-        ],
+        ]
       },
       geometry: {
         type: 'Point',
