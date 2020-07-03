@@ -84,7 +84,7 @@ module.exports.hierarchies = (db) => {
     const parentID = _.get(feat, 'properties.wof:parent_id', -1)
     if (superseded.has(parentID)) {
       const replacement = superseded.get(parentID)
-      console.info(`${id} has an incorrect parent_id, replacing ${id} with ${replacement}`)
+      console.info(`${id} has an incorrect parent_id, replacing ${parentID} with ${replacement}`)
       _.set(feat, 'properties.wof:parent_id', replacement)
       reindex = true
     }
@@ -92,10 +92,11 @@ module.exports.hierarchies = (db) => {
     // fix orphaned hierarchies
     const hierarchies = _.get(feat, 'properties.wof:hierarchy', [])
     _.forEach(hierarchies, (hierarchy, branch) => {
-      _.forEach(hierarchy, (id, key) => {
-        if (superseded.has(id)) {
-          const replacement = superseded.get(id)
-          console.info(`${id} has an incorrect ${key}, replacing ${id} with ${replacement}`)
+      _.forEach(hierarchy, (hierarchyId, key) => {
+        if (hierarchyId === id) { return } // do not update self-references
+        if (superseded.has(hierarchyId)) {
+          const replacement = superseded.get(hierarchyId)
+          console.info(`${id} has an incorrect ${key}, replacing ${hierarchyId} with ${replacement}`)
           _.set(feat, `properties.wof:hierarchy[${branch}][${key}]`, replacement)
           reindex = true
         }
