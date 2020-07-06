@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const feature = require('../whosonfirst/feature')
 const table = {
   geojson: require('./table/geojson'),
   ancestors: require('./table/ancestors'),
@@ -13,7 +14,8 @@ function findSuperseded (db) {
       id,
       json_extract(geojson.body, '$.properties."wof:supersedes"') AS supersedes
     FROM geojson
-    WHERE json_array_length(supersedes) > 0
+    WHERE is_alt = 0
+    AND json_array_length(supersedes) > 0
   `)
 
   const superseded = new Map()
@@ -26,9 +28,9 @@ function findSuperseded (db) {
   return superseded
 }
 
+// return a Set containing the IDs of all records which need to be fixed
 function findIdsToFix (db, superseded) {
   // use a temp table to avoid memory issues
-  // create temp table
   db.prepare('CREATE TEMP TABLE tmp_superseded_ids (id INTEGER PRIMARY KEY)').run()
 
   // populate table with superseded IDs
@@ -37,7 +39,7 @@ function findIdsToFix (db, superseded) {
     insert.run({ id })
   }
 
-  // find all documents parented by a superseded ID
+  // find all current documents parented by a superseded ID
   const stmt = db.prepare(`
     SELECT DISTINCT(id)
     FROM ancestors
@@ -48,18 +50,26 @@ function findIdsToFix (db, superseded) {
       WHERE ancestor_id = tmp_superseded_ids.id
       LIMIT 1
     )
+    AND EXISTS (
+      SELECT 1
+      FROM geojson
+      WHERE geojson.id = ancestors.id
+      AND is_alt = 0
+      AND json_extract(geojson.body, '$.properties."mz:is_current"') != 0
+      LIMIT 1
+    )
   `)
 
   // create a Set containing the IDs of all records which need to be fixed
-  const fixes = new Set()
+  const idsToFix = new Set()
   for (const row of stmt.iterate()) {
-    fixes.add(row.id)
+    idsToFix.add(row.id)
   }
 
   // clean up temp table
   db.prepare('DROP TABLE tmp_superseded_ids').run()
 
-  return fixes
+  return idsToFix
 }
 
 // fix orphaned hierarchies
@@ -80,8 +90,11 @@ module.exports.hierarchies = (db) => {
     const feat = JSON.parse(row.body)
     let reindex = false
 
+    // skip non-current records
+    if (!feature.isCurrent(feat)) { return }
+
     // fix parent id
-    const parentID = _.get(feat, 'properties.wof:parent_id', -1)
+    const parentID = feature.getParentId(feat)
     if (superseded.has(parentID)) {
       const replacement = superseded.get(parentID)
       console.info(`${id} has an incorrect parent_id, replacing ${parentID} with ${replacement}`)
