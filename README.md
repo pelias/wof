@@ -14,15 +14,15 @@ Ideally we'd like to only depend on utilities which come standard on most *nix s
 
 ```bash
 # check dependencies
-which cat find node git bzip2 gzip pv bsdtar
+which cat find node git bzip2 gzip pv bsdtar docker
 ```
 
 ```bash
 # ubuntu
-sudo apt-get install git bzip2 gzip pv libarchive-tools
+sudo apt-get install git bzip2 gzip pv libarchive-tools docker
 
 # mac OSX
-brew install git bzip2 gzip pv libarchive
+brew install git bzip2 gzip pv libarchive docker
 ```
 
 ## CLI
