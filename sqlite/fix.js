@@ -106,6 +106,7 @@ module.exports.hierarchies = (db, options) => {
     }
 
     // fix orphaned hierarchies
+    const placetype = feature.getPlacetype(feat)
     const hierarchies = _.get(feat, 'properties.wof:hierarchy', [])
     _.forEach(hierarchies, (hierarchy, branch) => {
       _.forEach(hierarchy, (hierarchyId, key) => {
@@ -116,8 +117,15 @@ module.exports.hierarchies = (db, options) => {
           console.error(`${id} has an incorrect ${key}, replacing ${hierarchyId} with ${replacementKey}=${replacement.id}`)
 
           // handle the case where the placetype changed when superseded
-          if (key !== replacementKey) { _.unset(feat, `properties.wof:hierarchy[${branch}][${key}]`) }
+          if (key !== replacementKey) {
+            _.unset(feat, `properties.wof:hierarchy[${branch}][${key}]`)
+            reindex = true
+          }
 
+          // do not update self-references (those with the same placetype as the record itself)
+          if (replacement.placetype === placetype) { return }
+
+          // update hierarchy
           _.set(feat, `properties.wof:hierarchy[${branch}][${replacementKey}]`, replacement.id)
           reindex = true
         }
