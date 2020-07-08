@@ -73,7 +73,7 @@ function findIdsToFix (db, superseded) {
 }
 
 // fix orphaned hierarchies
-module.exports.hierarchies = (db) => {
+module.exports.hierarchies = (db, options) => {
   const fetchOne = db.prepare(`
     SELECT body
     FROM geojson
@@ -97,7 +97,7 @@ module.exports.hierarchies = (db) => {
     const parentID = feature.getParentId(feat)
     if (superseded.has(parentID)) {
       const replacement = superseded.get(parentID)
-      console.info(`${id} has an incorrect parent_id, replacing ${parentID} with ${replacement}`)
+      console.error(`${id} has an incorrect parent_id, replacing ${parentID} with ${replacement}`)
       _.set(feat, 'properties.wof:parent_id', replacement)
       reindex = true
     }
@@ -109,7 +109,7 @@ module.exports.hierarchies = (db) => {
         if (hierarchyId === id) { return } // do not update self-references
         if (superseded.has(hierarchyId)) {
           const replacement = superseded.get(hierarchyId)
-          console.info(`${id} has an incorrect ${key}, replacing ${hierarchyId} with ${replacement}`)
+          console.error(`${id} has an incorrect ${key}, replacing ${hierarchyId} with ${replacement}`)
           _.set(feat, `properties.wof:hierarchy[${branch}][${key}]`, replacement)
           reindex = true
         }
@@ -118,14 +118,22 @@ module.exports.hierarchies = (db) => {
 
     // delete record and reimport it
     if (reindex) {
-      db.prepare('DELETE FROM geojson WHERE is_alt = 0 AND id = :id').run({ id })
-      table.geojson.insert(db)(feat)
+      // honour the 'dryrun' flag (disables saving to the db)
+      if (_.get(options, 'dryrun') !== true) {
+        db.prepare('DELETE FROM geojson WHERE is_alt = 0 AND id = :id').run({ id })
+        table.geojson.insert(db)(feat)
 
-      db.prepare('DELETE FROM ancestors WHERE id = :id').run({ id })
-      table.ancestors.insert(db)(feat)
+        db.prepare('DELETE FROM ancestors WHERE id = :id').run({ id })
+        table.ancestors.insert(db)(feat)
 
-      db.prepare('DELETE FROM spr WHERE id = :id').run({ id })
-      table.spr.insert(db)(feat)
+        db.prepare('DELETE FROM spr WHERE id = :id').run({ id })
+        table.spr.insert(db)(feat)
+      }
+
+      // honour the 'cat' flag (prints upddated docs to stdout)
+      if (_.get(options, 'cat') === true) {
+        console.log(JSON.stringify(feat))
+      }
     }
   })
 }

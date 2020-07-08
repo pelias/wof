@@ -12,9 +12,19 @@ module.exports = {
     })
 
     // optional params
+    yargs.option('dryrun', {
+      type: 'boolean',
+      default: false,
+      describe: 'Do not modify database.'
+    })
+    yargs.option('cat', {
+      type: 'boolean',
+      default: false,
+      describe: 'Print updated records to stdout.'
+    })
     yargs.option('hierarchies', {
       type: 'boolean',
-      default: true,
+      default: false,
       describe: 'Fix broken hierarchies.'
     })
   },
@@ -26,7 +36,7 @@ module.exports = {
     // hierarchies
     if (argv.hierarchies) {
       if (argv.verbose) { console.error('fixing orphaned hierarchies') }
-      sqlite.fix.hierarchies(db)
+      sqlite.fix.hierarchies(db, argv)
     }
   }
 }
