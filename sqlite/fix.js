@@ -7,11 +7,13 @@ const table = {
 }
 
 // return a map where the key is the ID of a superseded
-// record and the value is the replacement ID
+// record and the value is an object containing the
+// replacement ID & the replacement placetype.
 function findSuperseded (db) {
   const stmt = db.prepare(`
     SELECT
       id,
+      json_extract(geojson.body, '$.properties."wof:placetype"') AS placetype,
       json_extract(geojson.body, '$.properties."wof:supersedes"') AS supersedes
     FROM geojson
     WHERE is_alt = 0
@@ -22,7 +24,8 @@ function findSuperseded (db) {
   for (const row of stmt.iterate()) {
     const supersedes = JSON.parse(row.supersedes)
     if (!_.isArray(supersedes) || _.isEmpty(supersedes)) { continue }
-    supersedes.forEach(id => superseded.set(id, row.id))
+    const identity = { id: row.id, placetype: row.placetype }
+    supersedes.forEach(id => superseded.set(id, identity))
   }
 
   return superseded
@@ -97,8 +100,8 @@ module.exports.hierarchies = (db, options) => {
     const parentID = feature.getParentId(feat)
     if (superseded.has(parentID)) {
       const replacement = superseded.get(parentID)
-      console.error(`${id} has an incorrect parent_id, replacing ${parentID} with ${replacement}`)
-      _.set(feat, 'properties.wof:parent_id', replacement)
+      console.error(`${id} has an incorrect parent_id, replacing ${parentID} with ${replacement.id}`)
+      _.set(feat, 'properties.wof:parent_id', replacement.id)
       reindex = true
     }
 
@@ -109,8 +112,13 @@ module.exports.hierarchies = (db, options) => {
         if (hierarchyId === id) { return } // do not update self-references
         if (superseded.has(hierarchyId)) {
           const replacement = superseded.get(hierarchyId)
-          console.error(`${id} has an incorrect ${key}, replacing ${hierarchyId} with ${replacement}`)
-          _.set(feat, `properties.wof:hierarchy[${branch}][${key}]`, replacement)
+          const replacementKey = `${replacement.placetype}_id`
+          console.error(`${id} has an incorrect ${key}, replacing ${hierarchyId} with ${replacementKey}=${replacement.id}`)
+
+          // handle the case where the placetype changed when superseded
+          if (key !== replacementKey) { _.unset(feat, `properties.wof:hierarchy[${branch}][${key}]`) }
+
+          _.set(feat, `properties.wof:hierarchy[${branch}][${replacementKey}]`, replacement.id)
           reindex = true
         }
       })
