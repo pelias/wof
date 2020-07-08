@@ -130,7 +130,7 @@ module.exports.hierarchies = (db, options) => {
         table.spr.insert(db)(feat)
       }
 
-      // honour the 'cat' flag (prints upddated docs to stdout)
+      // honour the 'cat' flag (prints updated docs to stdout)
       if (_.get(options, 'cat') === true) {
         console.log(JSON.stringify(feat))
       }
