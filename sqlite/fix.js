@@ -1,5 +1,8 @@
 const _ = require('lodash')
-const feature = require('../whosonfirst/feature')
+const whosonfirst = {
+  feature: require('../whosonfirst/feature'),
+  hierarchies: require('../whosonfirst/hierarchies')
+}
 const table = {
   geojson: require('./table/geojson'),
   ancestors: require('./table/ancestors'),
@@ -108,13 +111,13 @@ module.exports.hierarchies = (db, options) => {
     let reindex = false
 
     // skip non-current records
-    if (!feature.isCurrent(feat)) { return }
+    if (!whosonfirst.feature.isCurrent(feat)) { return }
 
     // skip alt geometries
-    if (feature.isAltGeometry(feat)) { return }
+    if (whosonfirst.feature.isAltGeometry(feat)) { return }
 
     // fix parent id
-    const parentID = feature.getParentId(feat)
+    const parentID = whosonfirst.feature.getParentId(feat)
     if (superseded.has(parentID)) {
       const replacement = superseded.get(parentID)
       console.error(`${id} has an incorrect parent_id, replacing ${parentID} with ${replacement.id}`)
@@ -123,7 +126,7 @@ module.exports.hierarchies = (db, options) => {
     }
 
     // fix orphaned hierarchies
-    const placetype = feature.getPlacetype(feat)
+    const placetype = whosonfirst.feature.getPlacetype(feat)
     const hierarchies = _.get(feat, 'properties.wof:hierarchy', [])
     _.forEach(hierarchies, (hierarchy, branch) => {
       _.forEach(hierarchy, (hierarchyId, key) => {
@@ -161,9 +164,7 @@ module.exports.hierarchies = (db, options) => {
 
     // deduplicate hierarchies
     // remove any hierarchies which are duplicates of, or a subset of another hierarchy
-    const deduplicatedHierarchies = hierarchies.filter((h1, b1) => {
-      return !hierarchies.some((h2, b2) => (b1 !== b2) && _.isMatch(h2, h1))
-    })
+    const deduplicatedHierarchies = whosonfirst.hierarchies.deduplicate(hierarchies)
     if (deduplicatedHierarchies.length < hierarchies.length) {
       console.error(`${id} contains duplicate hierarchies, removing ${hierarchies.length - deduplicatedHierarchies.length} branch(es)`)
       _.set(feat, 'properties.wof:hierarchy', deduplicatedHierarchies)
