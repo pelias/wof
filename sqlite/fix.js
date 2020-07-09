@@ -22,10 +22,19 @@ function findSuperseded (db) {
 
   const superseded = new Map()
   for (const row of stmt.iterate()) {
+    // ensure the ID is a number greater than 1
+    const id = parseInt(row.id, 10)
+    if (_.isNaN(id) || id <= 1) { continue }
+
+    // parse supersedes array
     const supersedes = JSON.parse(row.supersedes)
     if (!_.isArray(supersedes) || _.isEmpty(supersedes)) { continue }
-    const identity = { id: row.id, placetype: row.placetype }
-    supersedes.forEach(id => superseded.set(id, identity))
+
+    // populate map
+    const identity = { id: id, placetype: row.placetype }
+    supersedes.map(id => parseInt(id, 10))
+      .filter(id => !_.isNaN(id) && id > 1)
+      .forEach(id => superseded.set(id, identity))
   }
 
   return superseded
@@ -66,7 +75,12 @@ function findIdsToFix (db, superseded) {
   // create a Set containing the IDs of all records which need to be fixed
   const idsToFix = new Set()
   for (const row of stmt.iterate()) {
-    idsToFix.add(row.id)
+    // ensure the ID is a number greater than 1
+    const id = parseInt(row.id, 10)
+    if (_.isNaN(id) || id <= 1) { return }
+
+    // populate set
+    idsToFix.add(id)
   }
 
   // clean up temp table
@@ -96,6 +110,9 @@ module.exports.hierarchies = (db, options) => {
     // skip non-current records
     if (!feature.isCurrent(feat)) { return }
 
+    // skip alt geometries
+    if (feature.isAltGeometry(feat)) { return }
+
     // fix parent id
     const parentID = feature.getParentId(feat)
     if (superseded.has(parentID)) {
@@ -111,6 +128,7 @@ module.exports.hierarchies = (db, options) => {
     _.forEach(hierarchies, (hierarchy, branch) => {
       _.forEach(hierarchy, (hierarchyId, key) => {
         if (hierarchyId === id) { return } // do not update self-references
+        if (key === `${placetype}_id`) { return } // do not update references to same placetype
         if (superseded.has(hierarchyId)) {
           const replacement = superseded.get(hierarchyId)
           const replacementKey = `${replacement.placetype}_id`
@@ -131,6 +149,26 @@ module.exports.hierarchies = (db, options) => {
         }
       })
     })
+
+    // ensure that self-references are correctly set in all hierarchies
+    _.forEach(hierarchies, (hierarchy, branch) => {
+      if (_.get(hierarchy, `${placetype}_id`) !== id) {
+        console.error(`${id} missing self-reference for ${placetype}_id on branch ${branch}`)
+        _.set(feat, `properties.wof:hierarchy[${branch}][${placetype}_id]`, id)
+        reindex = true
+      }
+    })
+
+    // deduplicate hierarchies
+    // remove any hierarchies which are duplicates of, or a subset of another hierarchy
+    const deduplicatedHierarchies = hierarchies.filter((h1, b1) => {
+      return !hierarchies.some((h2, b2) => (b1 !== b2) && _.isMatch(h2, h1))
+    })
+    if (deduplicatedHierarchies.length < hierarchies.length) {
+      console.error(`${id} contains duplicate hierarchies, removing ${hierarchies.length - deduplicatedHierarchies.length} branch(es)`)
+      _.set(feat, 'properties.wof:hierarchy', deduplicatedHierarchies)
+      reindex = true
+    }
 
     // delete record and reimport it
     if (reindex) {
