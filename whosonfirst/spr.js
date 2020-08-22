@@ -28,9 +28,10 @@ module.exports = (feat) => {
 function coordinates (feat) {
   // [minX, minY, maxX, maxY]
   const bbox = geometry.bbox(feat)
+  const centroid = geometry.centroid(feat)
   return {
-    latitude: (bbox[1] + ((bbox[3] - bbox[1]) / 2)),
-    longitude: (bbox[0] + ((bbox[2] - bbox[0]) / 2)),
+    latitude: centroid.lat,
+    longitude: centroid.lon,
     min_latitude: bbox[1],
     min_longitude: bbox[0],
     max_latitude: bbox[3],
