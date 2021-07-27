@@ -20,7 +20,7 @@
   "license": "MIT",
   "dependencies": {
     "@turf/bbox": "^6.0.1",
-    "better-sqlite3": "^6.0.1",
+    "better-sqlite3": "^7.4.3",
     "combine-streams": "^1.0.0",
     "command-exists": "^1.2.8",
     "csv-write-stream": "^2.0.0",

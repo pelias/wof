@@ -129,7 +129,7 @@ module.exports.insert = (test) => {
   })
   // https://github.com/whosonfirst/go-whosonfirst-sqlite-features/issues/7
   test('insert - improved unique constraint', (t) => {
-    const db = new Database('/tmp/foo', { memory: true })
+    const db = new Database(':memory:')
     geojson.create(db)
     geojson.createIndices(db)
 
