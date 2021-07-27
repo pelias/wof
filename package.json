@@ -26,6 +26,7 @@
     "jsonstream2": "^3.0.0",
     "lodash": "^4.17.15",
     "mississippi2": "^1.0.5",
+    "pretty-error": "^3.0.4",
     "require-all": "^3.0.0",
     "rfc5646": "^3.0.0",
     "tar-stream": "^2.1.2",
