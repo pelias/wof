@@ -31,3 +31,26 @@ module.exports.archive = (dir, tree, filterPath, args) => {
     bsdtar.extract(...args)
   )
 }
+
+module.exports.clone_strategies = ['standard', 'shallow', 'bare']
+module.exports.clone = (strategy, uri, dir, branch) => {
+  const flags = [
+    '--progress',
+    '--branch', branch
+  ]
+
+  // limit the clone depth for all non-standard strategies
+  if (strategy !== 'standard') {
+    flags.push(
+      '--depth', '1',
+      '--single-branch'
+    )
+  }
+
+  // perform a 'bare' clone (ie. no working copy of the files)
+  if (strategy === 'bare') {
+    flags.push('--bare')
+  }
+
+  return shell.spawn('git', ['clone', ...flags, uri, dir], { stdio: 'inherit' })
+}
