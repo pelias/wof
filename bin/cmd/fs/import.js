@@ -33,7 +33,11 @@ module.exports = {
         fs.mkdirSync(path.dirname(fullpath), { recursive: true })
 
         // optionally 'exportify' the record
-        if (argv.exportify) { feat = exportify(feat) }
+        if (argv.exportify) {
+          feat = exportify(feat)
+        } else {
+          feat = JSON.stringify(feat, null, 2)
+        }
 
         if (argv.verbose) { console.error(`write ${fullpath}`) }
         fs.writeFileSync(fullpath, feat)
