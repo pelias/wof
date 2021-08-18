@@ -1,10 +1,11 @@
+const _ = require('lodash')
 const fs = require('fs')
 const path = require('path')
 const filePath = require('../../../whosonfirst/file').path
-const exportify = require('../../../whosonfirst/exportify')
 const stream = {
   json: require('../../../stream/json'),
-  miss: require('../../../stream/miss')
+  miss: require('../../../stream/miss'),
+  marshaller: require('../../../stream/marshaller')
 }
 
 module.exports = {
@@ -23,24 +24,32 @@ module.exports = {
       default: false,
       describe: 'Run WOF exportify tool before writing files to disk.'
     })
+    yargs.option('exportify-host', {
+      type: 'string',
+      describe: 'Specify the URI of a running wof-exportify-www instance (including scheme and port).'
+    })
   },
   handler: (argv) => {
     process.stdin
       .pipe(stream.json.parse())
-      .pipe(stream.miss.through.obj((feat, enc, next) => {
+      .pipe(stream.marshaller({
+        verbose: (argv.verbose === true),
+        exportify: {
+          enabled: (argv.exportify === true),
+          host: _.get(argv, 'exportify-host')
+        }
+      }))
+      .pipe(stream.miss.through((bytes, enc, next) => {
+        // re-parse feature to find correct filepath
+        // @todo: can we avoid this?
+        const feat = JSON.parse(bytes.toString('utf8'))
+
         // ensure path exists
         const fullpath = path.join(argv.path, filePath.fromFeature(feat))
         fs.mkdirSync(path.dirname(fullpath), { recursive: true })
 
-        // optionally 'exportify' the record
-        if (argv.exportify) {
-          feat = exportify(feat)
-        } else {
-          feat = JSON.stringify(feat, null, 2)
-        }
-
         if (argv.verbose) { console.error(`write ${fullpath}`) }
-        fs.writeFileSync(fullpath, feat)
+        fs.writeFileSync(fullpath, bytes)
 
         next()
       }))
