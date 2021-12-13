@@ -74,7 +74,7 @@ module.exports.insert = (test) => {
       min_longitude: 0,
       max_latitude: 0,
       max_longitude: 0,
-      is_current: 1,
+      is_current: -1,
       is_deprecated: 0,
       is_ceased: 0,
       is_superseded: 0,
