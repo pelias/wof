@@ -14,7 +14,7 @@ module.exports = (feat) => {
     country: feature.getCountry(feat),
     repo: feature.getRepo(feat),
     ...coordinates(feat),
-    is_current: feature.isCurrent(feat) ? 1 : 0,
+    is_current: feature.getIsCurrent(feat),
     is_deprecated: feature.isDeprecated(feat) ? 1 : 0,
     is_ceased: feature.isCeased(feat) ? 1 : 0,
     is_superseded: feature.isSuperseded(feat) ? 1 : 0,
