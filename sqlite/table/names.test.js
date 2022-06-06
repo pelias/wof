@@ -57,7 +57,8 @@ module.exports.insert = (test) => {
       properties: {
         'name:ara_x_preferred': ['سانت جوليا دي لوريا'],
         'name:arg_x_variant': ['Sant Julià de Lòria'],
-        'name:bul_x_colloquial': ['Сан Джулия де Лория']
+        'name:bul_x_colloquial': ['Сан Джулия де Лория'],
+        'name:eng_x_preferred_abbreviation': ['ABBR']
       },
       geometry: {
         type: 'Point',
@@ -65,7 +66,7 @@ module.exports.insert = (test) => {
       }
     })
 
-    t.equals(db.stmt[0].action.run.length, 3)
+    t.equals(db.stmt[0].action.run.length, 4)
     t.deepEquals(db.stmt[0].action.run[0], [{
       language: 'ara',
       extlang: '',
@@ -103,6 +104,20 @@ module.exports.insert = (test) => {
       extension: '',
       privateuse: 'colloquial',
       name: 'Сан Джулия де Лория',
+      id: -1,
+      placetype: 'unknown',
+      country: 'XX',
+      lastmodified: -1
+    }])
+    t.deepEquals(db.stmt[0].action.run[3], [{
+      language: 'eng',
+      extlang: '',
+      script: undefined,
+      region: undefined,
+      variant: undefined,
+      extension: '',
+      privateuse: 'preferred_abbreviation',
+      name: 'ABBR',
       id: -1,
       placetype: 'unknown',
       country: 'XX',
