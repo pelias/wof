@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const LanguageTag = require('rfc5646')
 const feature = require('../../whosonfirst/feature')
-const privateUseRegex = /^(.*)[_-]x[_-]([a-z]*)$/
+const privateUseRegex = /^(.*)[_-]x[_-]([a-z]*(_abbreviation)?)$/
 
 module.exports.create = (db) => {
   db.prepare(`
