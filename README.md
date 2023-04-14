@@ -142,6 +142,7 @@ misc functions for working with feature streams
 ```bash
   wof feature format        reformat a feature stream
   wof feature map <script>  apply user-provided map function to features
+  wof feature ogr <dst>     export features using ogr2ogr
   wof feature properties    output feature properties
   wof feature stats         generate aggregate stats
 ```
@@ -210,6 +211,20 @@ cat jsonstream | wof feature map \
 
 ... stream of json after the map function has been applied
 ```
+
+#### GDAL (ogr2ogr)
+
+a convenience command for piping a feature stream into `ogr2ogr`:
+
+```bash
+cat jsonstream | wof feature ogr example.shp --format='Esri Shapefile'
+```
+
+```bash
+cat jsonstream | wof feature ogr example.gpkg --format='GPKG'
+```
+
+see: https://gdal.org/programs/ogr2ogr.html
 
 #### Feature Properties
 
