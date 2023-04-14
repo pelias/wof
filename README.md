@@ -121,6 +121,12 @@ wof sqlite export wof.db
 ... stream of geojson features
 ```
 
+Provide a custom SQL statement with `--sql`, or use one of the built-in aliases `@all` (default) or `@exportable`:
+
+```bash
+wof sqlite export --sql='@exportable' wof.db
+```
+
 #### SQLite Import
 
 import features into a SQLite database

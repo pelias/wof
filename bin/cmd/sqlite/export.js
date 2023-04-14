@@ -1,3 +1,5 @@
+const _ = require('lodash')
+const aliases = require('./aliases')
 const stream = { sqlite: require('../../../stream/sqlite') }
 const sqlite = { pragma: require('../../../sqlite/pragma') }
 const Database = require('better-sqlite3')
@@ -21,7 +23,7 @@ module.exports = {
 
     yargs.option('sql', {
       type: 'string',
-      default: 'SELECT body FROM geojson',
+      default: aliases.all,
       describe: 'SQL statement to use for export.'
     })
   },
@@ -35,6 +37,9 @@ module.exports = {
       if (argv.verbose) { console.error('using potentially unsafe PRAGMA settings to speed up imports') }
       sqlite.pragma.read(db)
     }
+
+    // sql aliases
+    if ((argv.sql || '').startsWith('@')) { argv.sql = _.get(aliases, argv.sql.slice(1).trim(), argv.sql) }
 
     // create export stream
     stream.sqlite.createReadStream(db, { sql: argv.sql })
