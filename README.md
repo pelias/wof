@@ -140,9 +140,10 @@ cat 101914243.geojson | wof sqlite import --rm wof.db
 misc functions for working with feature streams
 
 ```bash
-  wof feature format      reformat a feature stream
-  wof feature properties  output feature properties
-  wof feature stats       generate aggregate stats
+  wof feature format        reformat a feature stream
+  wof feature map <script>  apply user-provided map function to features
+  wof feature properties    output feature properties
+  wof feature stats         generate aggregate stats
 ```
 
 #### Feature Reformatting
@@ -150,21 +151,64 @@ misc functions for working with feature streams
 reformat a feature stream
 
 ```bash
-cat jsonstream | bin/whosonfirst.js feature format
+cat jsonstream | wof feature format
 
 ... stream of minified json, one item per line
 ```
 
 ```bash
-cat jsonstream | bin/whosonfirst.js feature format --open $'[\n' --sep $'\n,\n' --close $'\n]'
+cat jsonstream | wof feature format --open $'[\n' --sep $'\n,\n' --close $'\n]'
 
 ... stream of minified json, with array header, footer and separator
 ```
 
 ```bash
-cat 101914243.geojson | bin/whosonfirst.js feature format --indent 2
+cat 101914243.geojson | wof feature format --indent 2
 
 ... stream of pretty printed json
+```
+
+#### Feature Mapping
+
+provide a javascript mapping function to rewrite the output stream
+
+```js
+# my-custom-mapper.js
+module.exports = (feat, params) => feat
+```
+
+```bash
+cat jsonstream | wof feature map my-custom-mapper.js
+
+... stream of json after the map function has been applied
+```
+
+parameters can be passed to the view as either a JSON object:
+
+```bash
+# using 'params' (note the plural)
+cat jsonstream | wof feature map my-custom-mapper.js \
+  --params='{"foo": "bar", "faz": "baz"}'
+```
+
+or as key/value pairs:
+
+```bash
+# using 'param'
+cat jsonstream | wof feature map my-custom-mapper.js \
+  --param="foo=bar" \
+  --param='faz=baz'
+```
+
+Some built-in views are bundled in the `whosonfirst/views` directory:
+
+```bash
+cat jsonstream | wof feature map \
+  view://shapefile.js \
+  --param="placetype=locality" \
+  --param='geom=.*point'
+
+... stream of json after the map function has been applied
 ```
 
 #### Feature Properties
@@ -172,7 +216,7 @@ cat 101914243.geojson | bin/whosonfirst.js feature format --indent 2
 output feature properties
 
 ```bash
-cat 101914243.geojson | bin/whosonfirst.js feature properties -p 'wof:id' -p 'wof:placetype'
+cat 101914243.geojson | wof feature properties -p 'wof:id' -p 'wof:placetype'
 
 {"wof:id":101914243,"wof:placetype":"locality"}
 ```
@@ -182,7 +226,7 @@ cat 101914243.geojson | bin/whosonfirst.js feature properties -p 'wof:id' -p 'wo
 generate aggregate stats
 
 ```bash
-cat 101914243.geojson | bin/whosonfirst.js feature stats
+cat 101914243.geojson | wof feature stats
 
 {"locality":1}
 ```
