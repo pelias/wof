@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const _spr = require('../spr')
-const ok = require('./_filters')
+const filters = require('./_filters')
 
 /**
  * This is a semi-official view of the data used for generating shapefile extracts.
@@ -14,10 +14,14 @@ const ok = require('./_filters')
  */
 
 module.exports = (feat, params) => {
-  // run filters
-  if (!ok(feat, params)) return null
+  // param filters
+  if (!filters.params(feat, params)) return null
 
   const spr = _spr(feat)
+
+  // exportable filters
+  if (!filters.exportable(feat, spr)) return null
+
   feat.properties = {
     /* standard places response */
     id: spr.id,
