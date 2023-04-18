@@ -42,6 +42,7 @@ module.exports = (feat, params) => {
     date: new Date(spr.lastmodified * 1000).toISOString().split('T')[0],
 
     /* extended properties */
+    is_funky: _.get(feat, 'properties.mz:is_funky', ''),
     population: _.get(feat, 'properties.wof:population', ''),
     country_id: _.get(feat, 'properties.wof:hierarchy[0].country_id', ''),
     region_id: _.get(feat, 'properties.wof:hierarchy[0].region_id', ''),
