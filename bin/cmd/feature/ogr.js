@@ -1,3 +1,4 @@
+const path = require('path')
 const Stream = require('stream')
 const stream = {
   json: require('../../../stream/json'),
@@ -24,18 +25,16 @@ module.exports = {
       alias: 'rm',
       describe: 'ogr2ogr `-overwrite` argument. see: https://gdal.org/programs/ogr2ogr.html#cmdoption-ogr2ogr-overwrite'
     })
+    yargs.option('docker', {
+      type: 'boolean',
+      default: false,
+      describe: 'use a docker image for ogr2ogr'
+    })
   },
   handler: (argv) => {
     const tap = new Stream.PassThrough()
     process.stdin.once('data', () => { // avoid empty stdin
-      tap.pipe(stream.shell.duplex('ogr2ogr', [
-        '-f', argv.format,
-        '-a_srs', 'EPSG:4326',
-        ...(argv.unlink ? ['-overwrite'] : []),
-        ...formatSpecificArgs(argv.format.toLowerCase()),
-        argv.dst, '/vsistdin?buffer_limit=-1/'
-      ]))
-        .pipe(process.stdout)
+      tap.pipe(argv.docker ? docker(argv) : local(argv)).pipe(process.stdout)
     })
       .pipe(stream.json.parse())
       .pipe(stream.json.stringify('', '\n', '')) // add a newline between features
@@ -46,4 +45,33 @@ module.exports = {
 function formatSpecificArgs (format) {
   if (format.includes('shapefile')) return ['-lco', 'ENCODING=UTF-8']
   return []
+}
+
+function flags (argv) {
+  return [
+    '-f', argv.format,
+    '-a_srs', 'EPSG:4326',
+    ...(argv.unlink ? ['-overwrite'] : []),
+    ...formatSpecificArgs(argv.format.toLowerCase())
+  ]
+}
+
+function local (argv) {
+  return stream.shell.duplex('ogr2ogr', [
+    ...flags(argv),
+    argv.dst,
+    '/vsistdin?buffer_limit=-1/'
+  ])
+}
+
+function docker (argv) {
+  return stream.shell.duplex('docker', [
+    'run', '-i', '--rm',
+    '-v', `${path.dirname(path.resolve(process.cwd(), argv.dst))}:/work`,
+    'ghcr.io/osgeo/gdal:alpine-small-latest',
+    'ogr2ogr',
+    ...flags(argv),
+    `/work/${path.basename(argv.dst)}`,
+    '/vsistdin?buffer_limit=-1/'
+  ])
 }
