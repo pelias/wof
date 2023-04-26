@@ -43,7 +43,13 @@ module.exports = {
 }
 
 function formatSpecificArgs (format) {
-  if (format.includes('shapefile')) return ['-lco', 'ENCODING=UTF-8']
+  // https://gdal.org/drivers/vector/shapefile.html
+  if (format.includes('shapefile')) {
+    return [
+      '-lco', 'ENCODING=UTF-8',
+      '-lco', 'RESIZE=YES'
+    ]
+  }
   return []
 }
 
