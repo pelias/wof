@@ -5,7 +5,7 @@ module.exports.create = (db) => {
   db.prepare(`
     CREATE TABLE IF NOT EXISTS concordances (
       id INTEGER NOT NULL,
-      other_id INTEGER NOT NULL,
+      other_id TEXT NOT NULL,
       other_source TEXT,
       lastmodified INTEGER
   )`).run()
