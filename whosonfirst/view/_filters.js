@@ -3,7 +3,8 @@ const feature = require('../feature')
 
 // standard params filters
 function params (feat, params) {
-  if (!regex(_.get(params, 'placetype'), _.get(feat, 'properties.wof:placetype'))) return false
+  const placetypes = [feature.getPlacetype(feat), ...feature.getAltPlacetypes(feat)]
+  if (!contains(_.get(params, 'placetype'), placetypes)) return false
   if (!regex(_.get(params, 'geom'), _.get(feat, 'geometry.type'))) return false
 
   return true
@@ -26,4 +27,9 @@ function regex (pattern, match) {
   return new RegExp(`^${pattern}$`, 'i').test(match)
 }
 
-module.exports = { params, regex, exportable }
+function contains (needle, valid) {
+  if (!needle) return true
+  return valid.includes(needle)
+}
+
+module.exports = { params, regex, contains, exportable }

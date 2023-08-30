@@ -38,3 +38,16 @@ module.exports.getAltLabel = (test) => {
     t.end()
   })
 }
+
+module.exports.getAltPlacetypes = (test) => {
+  test('getAltPlacetypes', (t) => {
+    t.deepEqual([], feature.getAltPlacetypes({}))
+    t.deepEqual(['ALT_PLACETYPE'], feature.getAltPlacetypes({
+      properties: { 'wof:placetype_alt': 'ALT_PLACETYPE' }
+    }))
+    t.deepEqual(['ALT_PLACETYPE', 'ALT_PLACETYPE2'], feature.getAltPlacetypes({
+      properties: { 'wof:placetype_alt': ['ALT_PLACETYPE', 'ALT_PLACETYPE2'] }
+    }))
+    t.end()
+  })
+}
