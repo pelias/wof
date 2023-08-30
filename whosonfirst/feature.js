@@ -34,4 +34,8 @@ feature.isCeased = (feat) => feature.getCessation(feat) !== 'uuuu'
 feature.isSuperseded = (feat) => !!feature.getSupersededBy(feat).length
 feature.isSuperseding = (feat) => !!feature.getSupersedes(feat).length
 
+// features may provide additional alternative placetypes
+// see: https://github.com/whosonfirst-data/whosonfirst-data/issues/2152
+feature.getAltPlacetypes = (feat) => _.castArray(_.get(feat, 'properties.wof:placetype_alt', []))
+
 module.exports = feature
