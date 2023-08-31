@@ -38,4 +38,12 @@ feature.isSuperseding = (feat) => !!feature.getSupersedes(feat).length
 // see: https://github.com/whosonfirst-data/whosonfirst-data/issues/2152
 feature.getAltPlacetypes = (feat) => _.castArray(_.get(feat, 'properties.wof:placetype_alt', []))
 
+// return a list of local language codes used at this location
+// the second arguments may be 'official' (default), or 'spoken'
+feature.getLocalLanguages = (feat, type = 'official') => {
+  return _.castArray(_.get(feat, `properties.wof:lang_x_${type}`, []))
+    .filter(l => (_.isString(l) && l.length === 3))
+    .map(l => l.toLowerCase())
+}
+
 module.exports = feature
