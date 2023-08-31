@@ -76,3 +76,23 @@ module.exports.getLocalLanguages = (test) => {
     t.end()
   })
 }
+
+module.exports.getPlacetypeLocal = (test) => {
+  test('getPlacetypeLocal', (t) => {
+    t.deepEqual([], feature.getPlacetypeLocal({}))
+    t.deepEqual(['LOCAL_PLACETYPE'], feature.getPlacetypeLocal({
+      properties: { 'wof:placetype_local': 'LOCAL_PLACETYPE' }
+    }))
+    t.deepEqual(['LOCAL_PLACETYPE'], feature.getPlacetypeLocal({
+      properties: { 'wof:placetype_local': ['LOCAL_PLACETYPE'] }
+    }))
+    t.deepEqual(['ENDONYM_PLACETYPE', 'LOCAL_PLACETYPE'], feature.getPlacetypeLocal({
+      properties: {
+        'wof:lang_x_official': 'und',
+        'label:und_x_preferred_placetype': 'ENDONYM_PLACETYPE',
+        'wof:placetype_local': 'LOCAL_PLACETYPE'
+      }
+    }))
+    t.end()
+  })
+}

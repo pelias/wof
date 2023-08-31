@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const _spr = require('../spr')
 const filters = require('./_filters')
+const feature = require('../feature')
 
 /**
  * This is a semi-official view of the data used for generating shapefile extracts.
@@ -28,6 +29,7 @@ module.exports = (feat, params) => {
     parent_id: spr.parent_id,
     name: spr.name,
     placetype: spr.placetype,
+    placelocal: _.first(feature.getPlacetypeLocal(feat)) || '', // note: not a SPR field
     country: spr.country,
     repo: spr.repo,
     lat: spr.latitude,
