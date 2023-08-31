@@ -51,3 +51,28 @@ module.exports.getAltPlacetypes = (test) => {
     t.end()
   })
 }
+
+module.exports.getLocalLanguages = (test) => {
+  test('getLocalLanguages', (t) => {
+    t.deepEqual([], feature.getLocalLanguages({}))
+    t.deepEqual(['und'], feature.getLocalLanguages({
+      properties: { 'wof:lang_x_official': 'UND' }
+    }))
+    t.deepEqual(['und', 'eng'], feature.getLocalLanguages({
+      properties: { 'wof:lang_x_official': ['UND', 'ENG', ''] }
+    }))
+    t.deepEqual(['und'], feature.getLocalLanguages({
+      properties: { 'wof:lang_x_official': 'UND' }
+    }, 'official'))
+    t.deepEqual(['und', 'eng'], feature.getLocalLanguages({
+      properties: { 'wof:lang_x_official': ['UND', 'ENG', 1] }
+    }, 'official'))
+    t.deepEqual(['und'], feature.getLocalLanguages({
+      properties: { 'wof:lang_x_spoken': 'UND' }
+    }, 'spoken'))
+    t.deepEqual(['und', 'eng'], feature.getLocalLanguages({
+      properties: { 'wof:lang_x_spoken': ['UND', 'ENG', {}] }
+    }, 'spoken'))
+    t.end()
+  })
+}
