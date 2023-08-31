@@ -46,4 +46,13 @@ feature.getLocalLanguages = (feat, type = 'official') => {
     .map(l => l.toLowerCase())
 }
 
+// the local name for this placetype (ie. 'state' in the USA instead of 'region')
+// see: https://github.com/whosonfirst-data/whosonfirst-data/issues/2154
+feature.getPlacetypeLocal = (feat) => _.flatten(
+  feature.getLocalLanguages(feat, 'official')
+    .map(lang => `label:${lang}_x_preferred_placetype`)
+    .concat(['wof:placetype_local'])
+    .map(prop => _.get(feat, `properties.${prop}`))
+).filter(val => _.isString(val) && !_.isEmpty(val))
+
 module.exports = feature
