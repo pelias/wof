@@ -50,7 +50,8 @@ module.exports = (feat, params) => {
     /* extended properties */
     is_funky: _.get(feat, 'properties.mz:is_funky', ''),
     population: _.get(feat, 'properties.wof:population', ''),
-    country_id: _.get(feat, 'properties.wof:hierarchy[0].country_id', ''),
+    /* country and dependency are collectively "admin 0" for most general end users */
+    country_id: _.get(feat, 'properties.wof:hierarchy[0].country_id', _.get(feat, 'properties.wof:hierarchy[0].dependency_id', '')),
     region_id: _.get(feat, 'properties.wof:hierarchy[0].region_id', ''),
     county_id: _.get(feat, 'properties.wof:hierarchy[0].county_id', ''),
 
