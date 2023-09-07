@@ -45,7 +45,7 @@ module.exports = (feat, params) => {
     min_label: _.get(feat, 'properties.lbl:min_zoom', ''),
     max_label: _.get(feat, 'properties.lbl:max_zoom', ''),
 
-    date: new Date(spr.lastmodified * 1000).toISOString().split('T')[0],
+    modified: new Date(spr.lastmodified * 1000).toISOString().split('T')[0],
 
     /* extended properties */
     is_funky: _.get(feat, 'properties.mz:is_funky', ''),
