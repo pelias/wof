@@ -23,13 +23,24 @@ module.exports = (feat, params) => {
   // exportable filters
   if (!filters.exportable(feat, spr)) return null
 
+  // logic for placetype local property
+  if( _.first(feature.getPlacetypeLocal(feat))) {
+    if( _.first(feature.getPlacetypeLocalLatin(feat))):
+      placetype_local = concat( _.first(feature.getPlacetypeLocal(feat)), " (", _.first(feature.getPlacetypeLocalLatin(feat), ")";
+    } else {
+      placetype_local = _.first(feature.getPlacetypeLocal(feat));
+    }
+  } else {
+    placetype_local = _.first(feature.getPlacetypeLocalFallback(feat)) || '';
+  }
+
   feat.properties = {
     /* standard places response */
     id: spr.id,
     parent_id: spr.parent_id,
     name: spr.name,
     placetype: spr.placetype,
-    placelocal: _.first(feature.getPlacetypeLocal(feat)) || '', // note: not a SPR field
+    placelocal: placetype_local,
     country: spr.country,
     repo: spr.repo,
     lat: spr.latitude,
