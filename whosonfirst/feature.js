@@ -55,4 +55,18 @@ feature.getPlacetypeLocal = (feat) => _.flatten(
     .map(prop => _.get(feat, `properties.${prop}`))
 ).filter(val => _.isString(val) && !_.isEmpty(val))
 
+// return the property key for local official concordance used for this WOF record
+// generally this is a single element list, with the 1st being preferred
+feature.getOfficialConcordanceKey = (feat, type = 'official') => {
+  return _.castArray(_.get(feat, `properties.wof:concordances_${type}`, []))
+    .filter(l => (_.isString(l))
+}
+
+// return the local official concordance value for this WOF record
+feature.getOfficialConcordanceValue = (feat) => _.flatten(
+  feature.getOfficialConcordanceKey(feat, 'official')
+    .map(concordanceKey => `wof:concordances[${concordanceKey}]`)
+    .map(prop => _.get(feat, `properties.${prop}`))
+).filter(val => _.isString(val) && !_.isEmpty(val))
+
 module.exports = feature
