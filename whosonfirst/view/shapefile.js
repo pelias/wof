@@ -61,8 +61,8 @@ module.exports = (feat, params) => {
     hasc_id: _.get(feat, 'properties.wof:concordances.hasc:id', ''),
 
     /* national concordances */
-    concord_k: _.first(feature.getOfficialConcordanceKey(feat)) || '',
-    concord_v: _.first(feature.getOfficialConcordanceValue(feat)) || '',
+    concord_ke: _.first(feature.getOfficialConcordanceKey(feat)) || '',
+    concord_id: _.first(feature.getOfficialConcordanceValue(feat)) || '',
 
     /* translations */
     ...[
