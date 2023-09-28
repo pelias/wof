@@ -26,7 +26,7 @@ module.exports = (feat, params) => {
   // logic for placetype local property
   if( _.first(feature.getPlacetypeLocal(feat))) {
     if( _.first(feature.getPlacetypeLocalLatin(feat))) {
-      placetype_local = concat( _.first(feature.getPlacetypeLocal(feat)), " (", _.first(feature.getPlacetypeLocalLatin(feat), ")");
+      placetype_local = concat( _.first(feature.getPlacetypeLocal(feat)), " (", _.first(feature.getPlacetypeLocalLatin(feat), ")"));
     } else {
       placetype_local = _.first(feature.getPlacetypeLocal(feat));
     }
