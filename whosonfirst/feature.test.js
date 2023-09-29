@@ -83,9 +83,6 @@ module.exports.getPlacetypeLocal = (test) => {
     t.deepEqual(['LOCAL_PLACETYPE'], feature.getPlacetypeLocal({
       properties: { 'wof:placetype_local': 'LOCAL_PLACETYPE' }
     }))
-    t.deepEqual(['LOCAL_PLACETYPE'], feature.getPlacetypeLocal({
-      properties: { 'wof:placetype_local': ['LOCAL_PLACETYPE'] }
-    }))
     t.deepEqual(['ENDONYM_PLACETYPE', 'LOCAL_PLACETYPE'], feature.getPlacetypeLocal({
       properties: {
         'wof:lang_x_official': 'und',
@@ -94,7 +91,25 @@ module.exports.getPlacetypeLocal = (test) => {
       }
     }))
     // Makkah, Saudi Arabia
-    t.deepEqual(['مقاطعة (muhafazah)'], feature.getPlacetypeLocal({
+    t.deepEqual(['مقاطعة'], feature.getPlacetypeLocal({
+      properties: {
+        'wof:lang_x_official': 'ara',
+        'label:ara_x_preferred_placetype': 'مقاطعة',
+        'label:ara_latn_x_preferred_placetype': 'muhafazah',
+        'label:eng_x_preferred_placetype': 'region',
+        'wof:placetype': 'region'
+      }
+    }))
+    t.deepEqual(['muhafazah'], feature.getPlacetypeLocalLatin({
+      properties: {
+        'wof:lang_x_official': 'ara',
+        'label:ara_x_preferred_placetype': 'مقاطعة',
+        'label:ara_latn_x_preferred_placetype': 'muhafazah',
+        'label:eng_x_preferred_placetype': 'region',
+        'wof:placetype': 'region'
+      }
+    }))
+    t.deepEqual([], feature.getPlacetypeLocalFallback({
       properties: {
         'wof:lang_x_official': 'ara',
         'label:ara_x_preferred_placetype': 'مقاطعة',
@@ -112,8 +127,25 @@ module.exports.getPlacetypeLocal = (test) => {
         'wof:placetype': 'county'
       }
     }))
+    t.deepEqual(['unitary district'], feature.getPlacetypeLocalFallback({
+      properties: {
+        'wof:lang_x_official': 'eng',
+        'label:eng_x_preferred_placetype': 'unitary district',
+        'wof:placetype_local': 'unitary district',
+        'wof:placetype': 'county'
+      }
+    }))
     // Madrid, province in Spain
     t.deepEqual(['provincia'], feature.getPlacetypeLocal({
+      properties: {
+        'wof:lang_x_official': 'spa',
+        'label:eng_x_preferred_placetype': 'provincia',
+        'label:eng_x_preferred_placetype': 'province',
+        'wof:placetype_local': 'autonomous community',   // old junk data
+        'wof:placetype': 'region'
+      }
+    }))   
+    t.deepEqual(['autonomous community'], feature.getPlacetypeLocalFallback({
       properties: {
         'wof:lang_x_official': 'spa',
         'label:eng_x_preferred_placetype': 'provincia',
