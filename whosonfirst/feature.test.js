@@ -100,7 +100,7 @@ module.exports.getPlacetypeLocal = (test) => {
         'label:ara_x_preferred_placetype': 'مقاطعة',
         'label:ara_latn_x_preferred_placetype': 'muhafazah',
         'label:eng_x_preferred_placetype': 'region',
-        'wof:placetype': 'region',
+        'wof:placetype': 'region'
       }
     }))
     // Glasgow, Scotland, UK
@@ -108,8 +108,8 @@ module.exports.getPlacetypeLocal = (test) => {
       properties: {
         'wof:lang_x_official': 'eng',
         'label:eng_x_preferred_placetype': 'unitary district',
-        'wof:placetype_local': 'unitary district'
-        'wof:placetype': 'county',
+        'wof:placetype_local': 'unitary district',
+        'wof:placetype': 'county'
       }
     }))
     // Madrid, province in Spain
@@ -118,8 +118,8 @@ module.exports.getPlacetypeLocal = (test) => {
         'wof:lang_x_official': 'spa',
         'label:eng_x_preferred_placetype': 'provincia',
         'label:eng_x_preferred_placetype': 'province',
-        'wof:placetype_local': 'autonomous community'   // old junk data
-        'wof:placetype': 'region',
+        'wof:placetype_local': 'autonomous community',   // old junk data
+        'wof:placetype': 'region'
       }
     }))   
     t.end()
