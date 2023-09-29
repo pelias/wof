@@ -93,6 +93,35 @@ module.exports.getPlacetypeLocal = (test) => {
         'wof:placetype_local': 'LOCAL_PLACETYPE'
       }
     }))
+    // Makkah, Saudi Arabia
+    t.deepEqual(['مقاطعة (muhafazah)'], feature.getPlacetypeLocal({
+      properties: {
+        'wof:lang_x_official': 'ara',
+        'label:ara_x_preferred_placetype': 'مقاطعة',
+        'label:ara_latn_x_preferred_placetype': 'muhafazah',
+        'label:eng_x_preferred_placetype': 'region',
+        'wof:placetype': 'region',
+      }
+    }))
+    // Glasgow, Scotland, UK
+    t.deepEqual(['unitary district'], feature.getPlacetypeLocal({
+      properties: {
+        'wof:lang_x_official': 'eng',
+        'label:eng_x_preferred_placetype': 'unitary district',
+        'wof:placetype_local': 'unitary district'
+        'wof:placetype': 'county',
+      }
+    }))
+    // Madrid, province in Spain
+    t.deepEqual(['provincia'], feature.getPlacetypeLocal({
+      properties: {
+        'wof:lang_x_official': 'spa',
+        'label:eng_x_preferred_placetype': 'provincia',
+        'label:eng_x_preferred_placetype': 'province',
+        'wof:placetype_local': 'autonomous community'   // old junk data
+        'wof:placetype': 'region',
+      }
+    }))   
     t.end()
   })
 }
