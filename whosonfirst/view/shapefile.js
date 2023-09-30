@@ -55,15 +55,17 @@ module.exports = (feat, params) => {
     region_id: _.get(feat, 'properties.wof:hierarchy[0].region_id', ''),
     county_id: _.get(feat, 'properties.wof:hierarchy[0].county_id', ''),
 
-    /* global concordances */
-    iso_code: _.get(feat, 'properties.wof:concordances.iso:code', ''),
-    hasc_id: _.get(feat, 'properties.wof:concordances.hasc:id', ''),
-    gn_id: _.get(feat, 'properties.wof:concordances.gn:id', ''),
-    wd_id: _.get(feat, 'properties.wof:concordances.wd:id', ''),
-
     /* national concordances */
     concord_ke: _.first(feature.getOfficialConcordanceKey(feat)) || '',
     concord_id: _.first(feature.getOfficialConcordanceValue(feat)) || '',
+
+    /* international concordances */
+    iso_code: _.get(feat, 'properties.wof:concordances.iso:code', ''),
+    hasc_id: _.get(feat, 'properties.wof:concordances.hasc:id', ''),
+
+    /* widely available concordances */
+    gn_id: _.get(feat, 'properties.wof:concordances.gn:id', ''),
+    wd_id: _.get(feat, 'properties.wof:concordances.wd:id', ''),
 
     /* translations */
     ...[
