@@ -52,6 +52,7 @@ feature.getPlacetypeLocal = (feat) => _.flatten(
   feature.getLocalLanguages(feat, 'official')
     // Prefer the local placetype name (assumes latin char set), like: provincia
     .map(lang => `label:${lang}_x_preferred_placetype`)
+    .map(prop => _.get(feat, `properties.${prop}`))
 ).filter(val => _.isString(val) && !_.isEmpty(val))
 
 // the latinized local name for this placetype (ie. 'muhafazah' in the SA instead of 'مقاطعة')
@@ -61,17 +62,14 @@ feature.getPlacetypeLocalLatin = (feat) => _.flatten(
     // When a localized placetype isn't in a latin char set then WOF often provides
     // a transliteration we can includesin a parenthetical, like: مقاطعة (muhafazah)
     .map(lang => `label:${lang}_latn_x_preferred_placetype`)
+    .map(prop => _.get(feat, `properties.${prop}`))
 ).filter(val => _.isString(val) && !_.isEmpty(val))
 
 // the local name for this placetype (ie. 'state' in the USA instead of 'region')
 // see: https://github.com/whosonfirst-data/whosonfirst-data/issues/2154
 feature.getPlacetypeLocalFallback = (feat) => _.flatten(
   feature.getLocalLanguages(feat, 'official')
-    // Otherwise backfill with WOF's default English values, like: state
-    .concat(['label:eng_x_preferred_placetype'])
-    // Deprecated property, but sometimes a useful backfill
-    .concat(['wof:placetype_local'])
-    .map(prop => _.get(feat, `properties.${prop}`))
+    .map(prop => _.get(feat, 'properties.label:eng_x_preferred_placetype'))
 ).filter(val => _.isString(val) && !_.isEmpty(val))
 
 module.exports = feature

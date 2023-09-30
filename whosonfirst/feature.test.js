@@ -80,10 +80,10 @@ module.exports.getLocalLanguages = (test) => {
 module.exports.getPlacetypeLocal = (test) => {
   test('getPlacetypeLocal', (t) => {
     t.deepEqual([], feature.getPlacetypeLocal({}))
-    t.deepEqual(['LOCAL_PLACETYPE'], feature.getPlacetypeLocal({
+    t.deepEqual([], feature.getPlacetypeLocal({
       properties: { 'wof:placetype_local': 'LOCAL_PLACETYPE' }
     }))
-    t.deepEqual(['ENDONYM_PLACETYPE', 'LOCAL_PLACETYPE'], feature.getPlacetypeLocal({
+    t.deepEqual(['ENDONYM_PLACETYPE'], feature.getPlacetypeLocal({
       properties: {
         'wof:lang_x_official': 'und',
         'label:und_x_preferred_placetype': 'ENDONYM_PLACETYPE',
@@ -109,7 +109,7 @@ module.exports.getPlacetypeLocal = (test) => {
         'wof:placetype': 'region'
       }
     }))
-    t.deepEqual([], feature.getPlacetypeLocalFallback({
+    t.deepEqual(['region'], feature.getPlacetypeLocalFallback({
       properties: {
         'wof:lang_x_official': 'ara',
         'label:ara_x_preferred_placetype': 'مقاطعة',
@@ -139,21 +139,21 @@ module.exports.getPlacetypeLocal = (test) => {
     t.deepEqual(['provincia'], feature.getPlacetypeLocal({
       properties: {
         'wof:lang_x_official': 'spa',
-        'label:eng_x_preferred_placetype': 'provincia',
+        'label:spa_x_preferred_placetype': 'provincia',
         'label:eng_x_preferred_placetype': 'province',
-        'wof:placetype_local': 'autonomous community',   // old junk data
+        'wof:placetype_local': 'autonomous community', // old junk data
         'wof:placetype': 'region'
       }
-    }))   
-    t.deepEqual(['autonomous community'], feature.getPlacetypeLocalFallback({
+    }))
+    t.deepEqual(['province'], feature.getPlacetypeLocalFallback({
       properties: {
         'wof:lang_x_official': 'spa',
-        'label:eng_x_preferred_placetype': 'provincia',
+        'label:spa_x_preferred_placetype': 'provincia',
         'label:eng_x_preferred_placetype': 'province',
-        'wof:placetype_local': 'autonomous community',   // old junk data
+        'wof:placetype_local': 'autonomous community', // old junk data
         'wof:placetype': 'region'
       }
-    }))   
+    }))
     t.end()
   })
 }
