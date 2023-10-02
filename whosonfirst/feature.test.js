@@ -96,39 +96,3 @@ module.exports.getPlacetypeLocal = (test) => {
     t.end()
   })
 }
-
-module.exports.getOfficialConcordanceKey = (test) => {
-  test('getOfficialConcordanceKey', (t) => {
-    t.deepEqual([], feature.getOfficialConcordanceKey({}))
-    t.deepEqual(['abc:id'], feature.getOfficialConcordanceKey({
-      properties: {
-        'wof:concordances_official': 'abc:id'
-      }
-    }))
-    t.deepEqual(['abc:id'], feature.getOfficialConcordanceKey({
-      properties: {
-        'wof:concordances_official': 'abc:id',
-        'wof:concordances': { 'abc:id': '06001' }
-      }
-    }))
-    t.end()
-  })
-}
-
-module.exports.getOfficialConcordanceValue = (test) => {
-  test('getOfficialConcordanceValue', (t) => {
-    t.deepEqual([], feature.getOfficialConcordanceValue({}))
-    t.deepEqual([], feature.getOfficialConcordanceValue({
-      properties: {
-        'wof:concordances_official': 'abc:id'
-      }
-    }))
-    t.deepEqual(['06001'], feature.getOfficialConcordanceValue({
-      properties: {
-        'wof:concordances_official': 'abc:id',
-        'wof:concordances': { 'abc:id': '06001' }
-      }
-    }))
-    t.end()
-  })
-}
