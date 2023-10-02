@@ -50,9 +50,15 @@ feature.getLocalLanguages = (feat, type = 'official') => {
 // see: https://github.com/whosonfirst-data/whosonfirst-data/issues/2154
 feature.getPlacetypeLocal = (feat) => _.flatten(
   feature.getLocalLanguages(feat, 'official')
-    .map(lang => `label:${lang}_x_preferred_placetype`)
-    .concat(['wof:placetype_local'])
-    .map(prop => _.get(feat, `properties.${prop}`))
+    .concat(['eng']) // fallback to English when no other languages are available
+    .map(lang => {
+      const endonym = _.get(feat, `properties.label:${lang}_x_preferred_placetype`)
+
+      // When a localized placetype isn't in a latin char set then WOF often provides
+      // a transliteration we can include in a parenthetical, like: مقاطعة (muhafazah)
+      const latinized = _.get(feat, `properties.label:${lang}_latn_x_preferred_placetype`)
+      return (endonym && latinized) ? endonym + ` (${latinized})` : endonym
+    })
 ).filter(val => _.isString(val) && !_.isEmpty(val))
 
 module.exports = feature
