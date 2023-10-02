@@ -50,26 +50,15 @@ feature.getLocalLanguages = (feat, type = 'official') => {
 // see: https://github.com/whosonfirst-data/whosonfirst-data/issues/2154
 feature.getPlacetypeLocal = (feat) => _.flatten(
   feature.getLocalLanguages(feat, 'official')
-    // Prefer the local placetype name (assumes latin char set), like: provincia
-    .map(lang => `label:${lang}_x_preferred_placetype`)
-    .map(prop => _.get(feat, `properties.${prop}`))
-).filter(val => _.isString(val) && !_.isEmpty(val))
+    .concat(['eng']) // fallback to English when no other languages are available
+    .map(lang => {
+      const endonym = _.get(feat, `properties.label:${lang}_x_preferred_placetype`)
 
-// the latinized local name for this placetype (ie. 'muhafazah' in the SA instead of 'مقاطعة')
-// see: https://github.com/whosonfirst-data/whosonfirst-data/issues/2154
-feature.getPlacetypeLocalLatin = (feat) => _.flatten(
-  feature.getLocalLanguages(feat, 'official')
-    // When a localized placetype isn't in a latin char set then WOF often provides
-    // a transliteration we can includesin a parenthetical, like: مقاطعة (muhafazah)
-    .map(lang => `label:${lang}_latn_x_preferred_placetype`)
-    .map(prop => _.get(feat, `properties.${prop}`))
-).filter(val => _.isString(val) && !_.isEmpty(val))
-
-// the local name for this placetype (ie. 'state' in the USA instead of 'region')
-// see: https://github.com/whosonfirst-data/whosonfirst-data/issues/2154
-feature.getPlacetypeLocalFallback = (feat) => _.flatten(
-  feature.getLocalLanguages(feat, 'official')
-    .map(prop => _.get(feat, 'properties.label:eng_x_preferred_placetype'))
+      // When a localized placetype isn't in a latin char set then WOF often provides
+      // a transliteration we can include in a parenthetical, like: مقاطعة (muhafazah)
+      const latinized = _.get(feat, `properties.label:${lang}_latn_x_preferred_placetype`)
+      return (endonym && latinized) ? endonym + ` (${latinized})` : endonym
+    })
 ).filter(val => _.isString(val) && !_.isEmpty(val))
 
 module.exports = feature

@@ -23,30 +23,13 @@ module.exports = (feat, params) => {
   // exportable filters
   if (!filters.exportable(feat, spr)) return null
 
-  var placetypeLocal = ''
-
-  // logic for placetype local property, assuming a localized label in that place's 1st official language
-  if (_.first(feature.getPlacetypeLocal(feat))) {
-    // some locales don't use latin character sets, but the label also provides a transliteration
-    // for wider legibility for locals and tourists, display as "localized (latinized)"
-    if (_.first(feature.getPlacetypeLocalLatin(feat))) {
-      placetypeLocal = _.first(feature.getPlacetypeLocal(feat)).concat(' (', _.first(feature.getPlacetypeLocalLatin(feat), ')'))
-    // assumed latin char set (or transliteration not available)
-    } else {
-      placetypeLocal = _.first(feature.getPlacetypeLocal(feat))
-    }
-  // sometimes we only have an English label
-  } else {
-    placetypeLocal = _.first(feature.getPlacetypeLocalFallback(feat)) || ''
-  }
-
   feat.properties = {
     /* standard places response */
     id: spr.id,
     parent_id: spr.parent_id,
     name: spr.name,
     placetype: spr.placetype,
-    placelocal: placetypeLocal,
+    placelocal: feature.getPlaceTypeLocal(feat),
     country: spr.country,
     repo: spr.repo,
     lat: spr.latitude,
