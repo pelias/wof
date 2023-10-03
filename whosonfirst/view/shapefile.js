@@ -29,7 +29,7 @@ module.exports = (feat, params) => {
     parent_id: spr.parent_id,
     name: spr.name,
     placetype: spr.placetype,
-    placelocal: feature.getPlaceTypeLocal(feat),
+    placelocal: _.first(feature.getPlacetypeLocal(feat)) || '',
     country: spr.country,
     repo: spr.repo,
     lat: spr.latitude,
