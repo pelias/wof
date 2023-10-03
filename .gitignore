@@ -5,4 +5,5 @@ package-lock.json
 *.db
 *.tar
 *.geojson
+!test/fixtures/*.geojson
 *.csv

@@ -29,7 +29,7 @@ module.exports = (feat, params) => {
     parent_id: spr.parent_id,
     name: spr.name,
     placetype: spr.placetype,
-    placelocal: feature.getPlaceTypeLocal(feat),
+    placelocal: _.first(feature.getPlacetypeLocal(feat)) || '',
     country: spr.country,
     repo: spr.repo,
     lat: spr.latitude,
@@ -57,7 +57,7 @@ module.exports = (feat, params) => {
 
     /* national concordances */
     concord_ke: _.get(feat, 'properties.wof:concordances_official', ''),
-    concord_id: _.get(feat, `properties.wof:concordances[${_.get(feat, 'properties.wof:concordances_official', '')}]`),
+    concord_id: _.get(feat, `properties.wof:concordances[${_.get(feat, 'properties.wof:concordances_official', '')}]`, ''),
 
     /* international concordances */
     iso_code: _.get(feat, 'properties.wof:concordances.iso:code', ''),
