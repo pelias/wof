@@ -16,7 +16,6 @@ function exportable (feat, spr) {
   if (spr.id <= 0) return false
   if (spr.is_deprecated) return false
   if (spr.is_superseded) return false
-  if (spr.name.trim() === '') return false
   if (spr.latitude === 0.0 && spr.longitude === 0.0) return false
 
   return true
