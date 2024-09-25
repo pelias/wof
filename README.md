@@ -228,6 +228,12 @@ cat jsonstream | wof feature ogr example.gpkg --format='GPKG'
 cat jsonstream | wof feature ogr example.parquet --format='Parquet'
 ```
 
+use a dockerized version of `ogr2ogr` (to avoid installing locally):
+
+```bash
+wof feature ogr --docker
+```
+
 see: https://gdal.org/programs/ogr2ogr.html
 
 #### Feature Properties
