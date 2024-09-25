@@ -55,6 +55,11 @@ function formatSpecificArgs (format) {
       '-lco', 'RESIZE=YES'
     ]
   }
+  if (format.includes('parquet')) {
+    return [
+      '-lco', 'SORT_BY_BBOX=YES'
+    ]
+  }
   return []
 }
 
