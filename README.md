@@ -224,6 +224,10 @@ cat jsonstream | wof feature ogr example.shp --format='Esri Shapefile'
 cat jsonstream | wof feature ogr example.gpkg --format='GPKG'
 ```
 
+```bash
+cat jsonstream | wof feature ogr example.parquet --format='Parquet'
+```
+
 see: https://gdal.org/programs/ogr2ogr.html
 
 #### Feature Properties
