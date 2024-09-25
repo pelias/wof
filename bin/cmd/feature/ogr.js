@@ -74,7 +74,7 @@ function docker (argv) {
   return stream.shell.duplex('docker', [
     'run', '-i', '--rm',
     '-v', `${path.dirname(path.resolve(process.cwd(), argv.dst))}:/work`,
-    'ghcr.io/osgeo/gdal:alpine-small-latest',
+    'ghcr.io/osgeo/gdal:alpine-normal-latest',
     'ogr2ogr',
     ...flags(argv),
     `/work/${path.basename(argv.dst)}`,
