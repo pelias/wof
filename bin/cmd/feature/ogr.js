@@ -30,6 +30,11 @@ module.exports = {
       default: false,
       describe: 'use a docker image for ogr2ogr'
     })
+    yargs.option('image', {
+      type: 'string',
+      default: 'ghcr.io/osgeo/gdal:alpine-normal-latest',
+      describe: 'docker image to use'
+    })
   },
   handler: (argv) => {
     const tap = new Stream.PassThrough()
@@ -74,7 +79,7 @@ function docker (argv) {
   return stream.shell.duplex('docker', [
     'run', '-i', '--rm',
     '-v', `${path.dirname(path.resolve(process.cwd(), argv.dst))}:/work`,
-    'ghcr.io/osgeo/gdal:alpine-normal-latest',
+    argv.image,
     'ogr2ogr',
     ...flags(argv),
     `/work/${path.basename(argv.dst)}`,
