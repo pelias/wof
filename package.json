@@ -1,5 +1,5 @@
 {
-  "name": "@whosonfirst/wof",
+  "name": "@edrinc/wof",
   "version": "0.0.0-development",
   "description": "WhosOnFirst tools",
   "main": "index.js",
@@ -21,7 +21,7 @@
   "dependencies": {
     "@turf/bbox": "^6.0.1",
     "axios": "^0.21.1",
-    "better-sqlite3": "^8.3.0",
+    "better-sqlite3": "^10.0.0",
     "combine-streams": "^1.0.0",
     "command-exists": "^1.2.8",
     "csv-write-stream": "^2.0.0",
