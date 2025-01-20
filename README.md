@@ -1,3 +1,7 @@
+# Pelias Who's on First utilities
+
+This repository provides some command line utilities for working with Who's on First data. For the Who's on first importer, which is unrelated, see [this repo](https://github.com/pelias/whosonfirst).
+
 [BETA] This repo is still a work-in-progress.
 
 ## Installation
