@@ -8,9 +8,10 @@ jobs:
         os:
           - ${{ vars.UBUNTU_VERSION || 'ubuntu-22.04' }}
         node-version:
+          - 23.x
+          - 22.x
           - 20.x
           - 18.x
-          - 16.x
     steps:
       - uses: actions/checkout@v4
       - name: 'Install node.js ${{ matrix.node-version }}'
