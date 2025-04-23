@@ -29,8 +29,8 @@ feature.getLastModified = (feat) => _.get(feat, 'properties.wof:lastmodified', -
 // boolean funcs
 feature.isAltGeometry = (feat) => !!feature.getAltLabel(feat)
 feature.isCurrent = (feat) => feature.getIsCurrent(feat) !== 0
-feature.isDeprecated = (feat) => feature.getDeprecated(feat) !== 'uuuu'
-feature.isCeased = (feat) => feature.getCessation(feat) !== 'uuuu'
+feature.isDeprecated = (feat) => /\d/.test(feature.getDeprecated(feat))
+feature.isCeased = (feat) => /\d/.test(feature.getCessation(feat))
 feature.isSuperseded = (feat) => !!feature.getSupersededBy(feat).length
 feature.isSuperseding = (feat) => !!feature.getSupersedes(feat).length
 
