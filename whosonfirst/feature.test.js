@@ -122,3 +122,85 @@ module.exports.getPlacetypeLocal = (test) => {
     t.end()
   })
 }
+
+module.exports.isCeased = (test) => {
+  test('isCeased', (t) => {
+    t.false(feature.isCeased({}))
+
+    // unknown
+    t.false(feature.isCeased({
+      properties: { 'edtf:cessation': 'uuuu' }
+    }))
+    t.false(feature.isCeased({
+      properties: { 'edtf:cessation': '' }
+    }))
+
+    // open
+    t.false(feature.isCeased({
+      properties: { 'edtf:cessation': 'open' }
+    }))
+    t.false(feature.isCeased({
+      properties: { 'edtf:cessation': '..' }
+    }))
+
+    // dates
+    t.true(feature.isCeased({
+      properties: { 'edtf:cessation': '2023-02-13' }
+    }))
+    t.true(feature.isCeased({
+      properties: { 'edtf:cessation': '2024-02' }
+    }))
+    t.true(feature.isCeased({
+      properties: { 'edtf:cessation': '2006' }
+    }))
+    t.true(feature.isCeased({
+      properties: { 'edtf:cessation': '2018?' }
+    }))
+    t.true(feature.isCeased({
+      properties: { 'edtf:cessation': '1945~' }
+    }))
+
+    t.end()
+  })
+}
+
+module.exports.isDeprecated = (test) => {
+  test('isDeprecated', (t) => {
+    t.false(feature.isDeprecated({}))
+
+    // unknown
+    t.false(feature.isDeprecated({
+      properties: { 'edtf:deprecated': 'uuuu' }
+    }))
+    t.false(feature.isDeprecated({
+      properties: { 'edtf:deprecated': '' }
+    }))
+
+    // open
+    t.false(feature.isDeprecated({
+      properties: { 'edtf:deprecated': 'open' }
+    }))
+    t.false(feature.isDeprecated({
+      properties: { 'edtf:deprecated': '..' }
+    }))
+
+    // dates
+    t.true(feature.isDeprecated({
+      properties: { 'edtf:deprecated': '2023-02-13' }
+    }))
+    t.true(feature.isDeprecated({
+      properties: { 'edtf:deprecated': '2024-02' }
+    }))
+    t.true(feature.isDeprecated({
+      properties: { 'edtf:deprecated': '2006' }
+    }))
+    t.true(feature.isDeprecated({
+      properties: { 'edtf:deprecated': '2018?' }
+    }))
+    t.true(feature.isDeprecated({
+      properties: { 'edtf:deprecated': '1945~' }
+    }))
+
+    t.end()
+  })
+}
