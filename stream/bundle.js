@@ -47,12 +47,12 @@ module.exports.createWriteStream = (options) => {
         // create a new tempfile for this placetype
         if (!_.has(metadata, placetype)) {
           const tmpFileName = tmp.tmpNameSync()
+          const sink = fs.createWriteStream(tmpFileName)
+          const closed = new Promise((resolve, reject) => sink.on('error', reject).on('close', resolve))
           const store = {
             path: tmpFileName,
-            writable: miss.pipeline.obj(
-              csv(),
-              fs.createWriteStream(tmpFileName)
-            )
+            writable: miss.pipeline.obj(csv(), sink),
+            closed
           }
           metadata[placetype] = store
         }
@@ -66,15 +66,13 @@ module.exports.createWriteStream = (options) => {
   }
 
   // called at the end
-  const flush = (done) => {
+  const flush = async (done) => {
     // write meta file(s)
     if (options.nometa !== true) {
-      _.each(metadata, (store, placetype) => {
-        // end writing to file
+      // write CSV meta files
+      _.each(metadata, async (store, placetype) => {
         store.writable.end()
-
-        // write CSV meta files
-        // @todo: try getting this to work with pure streams?
+        await store.closed
         const metaFilename = convention.metaFilename(options.collection, placetype, options.vintage)
         const header = { name: path.join('meta', metaFilename) }
         pack.entry(header, fs.readFileSync(store.path))
