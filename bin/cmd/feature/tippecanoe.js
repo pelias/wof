@@ -1,7 +1,6 @@
 const _ = require('lodash')
 const path = require('path')
 const Stream = require('stream')
-const feature = require('../../../whosonfirst/feature')
 const stream = {
   json: require('../../../stream/json'),
   shell: require('../../../stream/shell'),
@@ -33,8 +32,22 @@ module.exports = {
       default: 'versatiles/versatiles-tippecanoe',
       describe: 'docker image to use'
     })
+    yargs.option('layer-selectors', {
+      type: 'string',
+      default: 'properties.wof:placetype|properties.src:alt_label',
+      describe: 'lodash selectors to pick layer name (pipe separated, first matching used)'
+    })
   },
   handler: (argv) => {
+    // layers are dynamically selected based on the first matching lodash selector
+    const layerSelectors = _.get(argv, 'layer-selectors').split('|').map(p => p.trim())
+    const pickLayer = (feat) => {
+      for (const selector of layerSelectors) {
+        const found = _.get(feat, selector)
+        if (_.isString(found)) return found.trim()
+      }
+    }
+
     const tap = new Stream.PassThrough()
     process.stdin.once('data', () => { // avoid empty stdin
       tap.pipe(argv.docker ? docker(argv) : local(argv)).pipe(process.stdout)
@@ -42,9 +55,7 @@ module.exports = {
       .pipe(stream.json.parse())
       .pipe(stream.miss.through.obj((feat, enc, next) => {
         // add tippecanoe config
-        let layer = feature.getPlacetype(feat)
-        if (feature.isAltGeometry(feat)) { layer = `alt-${feature.getAltLabel(feat)}` }
-        _.set(feat, 'tippecanoe.layer', layer)
+        _.set(feat, 'tippecanoe.layer', pickLayer(feat) || 'unknown')
         next(null, feat)
       }))
       .pipe(stream.json.stringify('', '\n', '')) // add a newline between features
