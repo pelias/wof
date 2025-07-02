@@ -240,6 +240,22 @@ wof feature ogr --docker
 
 see: https://gdal.org/programs/ogr2ogr.html
 
+#### tippecanoe
+
+a convenience command for piping a feature stream into `tippecanoe`:
+
+```bash
+cat jsonstream | wof feature tippecanoe --unlink example.pmtiles
+```
+
+use a dockerized version of `tippecanoe` (to avoid installing locally):
+
+```bash
+wof feature tippecanoe --docker
+```
+
+see: https://github.com/mapbox/tippecanoe
+
 #### Feature Properties
 
 output feature properties
