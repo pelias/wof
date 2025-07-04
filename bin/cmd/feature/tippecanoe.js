@@ -66,6 +66,7 @@ module.exports = {
 function flags (argv) {
   return [
     '-zg', // automatically choose maxzoom
+    '--no-tile-size-limit', // allow oversize tiles
     '--projection=EPSG:4326',
     ...(argv.unlink ? ['--force'] : [])
   ]
