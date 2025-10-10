@@ -27,7 +27,7 @@ module.exports.createWriteStream = (db, opts) => {
 
     try {
       // insert document in each table
-      _.each(stmts, insert => insert(feat))
+      _.each(stmts, insert => insert(feat, opts.clean === true))
     } catch (e) {
       return next(e)
     }
