@@ -14,14 +14,24 @@ module.exports.create = (db) => {
 }
 
 module.exports.insert = (db) => {
-  const stmt = db.prepare(`
-    INSERT OR IGNORE
-    INTO geojson (id, body, source, alt_label, is_alt, lastmodified)
-    VALUES (:id, :body, :source, :alt_label, :is_alt, :lastmodified)
-  `)
+  const stmt = {
+    insert: db.prepare(`
+      INSERT OR IGNORE
+      INTO geojson (id, body, source, alt_label, is_alt, lastmodified)
+      VALUES (:id, :body, :source, :alt_label, :is_alt, :lastmodified)
+    `),
+    clean: db.prepare('DELETE FROM geojson WHERE id = :id AND is_alt = :is_alt')
+  }
 
-  return (feat) => {
-    stmt.run({
+  return (feat, clean = false) => {
+    if (clean === true) {
+      stmt.clean.run({
+        id: feature.getID(feat),
+        is_alt: feature.isAltGeometry(feat) ? 1 : 0
+      })
+    }
+
+    stmt.insert.run({
       id: feature.getID(feat),
       body: codec.encode(feat),
       source: feature.getSource(feat),

@@ -12,15 +12,22 @@ module.exports.create = (db) => {
 }
 
 module.exports.insert = (db) => {
-  const stmt = db.prepare(`
-    INSERT OR IGNORE
-    INTO ancestors (id, ancestor_id, ancestor_placetype, lastmodified)
-    VALUES (:id, :ancestor_id, :ancestor_placetype, :lastmodified)
-  `)
+  const stmt = {
+    insert: db.prepare(`
+      INSERT OR IGNORE
+      INTO ancestors (id, ancestor_id, ancestor_placetype, lastmodified)
+      VALUES (:id, :ancestor_id, :ancestor_placetype, :lastmodified)
+    `),
+    clean: db.prepare('DELETE FROM ancestors WHERE id = :id')
+  }
 
-  return (feat) => {
+  return (feat, clean = false) => {
     // table does not support alt geometries
     if (feature.isAltGeometry(feat)) { return }
+
+    if (clean === true) {
+      stmt.clean.run({ id: feature.getID(feat) })
+    }
 
     const hierarchies = _.get(feat, 'properties.wof:hierarchy', [])
 
@@ -31,7 +38,7 @@ module.exports.insert = (db) => {
 
     _.each(hierarchies, (hierarchy, branch) => {
       _.each(hierarchy, (wofID, key) => {
-        stmt.run(_.extend({
+        stmt.insert.run(_.extend({
           ancestor_id: wofID,
           ancestor_placetype: key.replace(/_id$/, '')
         }, common))

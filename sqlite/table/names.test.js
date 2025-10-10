@@ -43,8 +43,9 @@ module.exports.insert = (test) => {
     const insert = names.insert(db)
 
     t.equals(typeof insert, 'function')
-    t.equals(db.stmt.length, 1)
+    t.equals(db.stmt.length, 2)
     t.true(db.stmt[0].sql.includes('INSERT OR IGNORE INTO names'))
+    t.true(db.stmt[1].sql.includes('DELETE FROM names'))
 
     t.end()
   })
@@ -122,6 +123,32 @@ module.exports.insert = (test) => {
       placetype: 'unknown',
       country: 'XX',
       lastmodified: -1
+    }])
+
+    t.end()
+  })
+  test('insert - using clean=true', (t) => {
+    const db = new MockDatabase()
+    const insert = names.insert(db)
+
+    insert({
+      type: 'Feature',
+      properties: {
+        'name:ara_x_preferred': ['سانت جوليا دي لوريا'],
+        'name:arg_x_variant': ['Sant Julià de Lòria'],
+        'name:bul_x_colloquial': ['Сан Джулия де Лория'],
+        'name:eng_x_preferred_abbreviation': ['ABBR']
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [0, 0]
+      }
+    }, true)
+
+    // clean should be called once
+    t.equals(db.stmt[1].action.run.length, 1)
+    t.deepEquals(db.stmt[1].action.run[0], [{
+      id: -1
     }])
 
     t.end()

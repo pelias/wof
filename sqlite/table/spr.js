@@ -28,27 +28,34 @@ module.exports.create = (db) => {
 }
 
 module.exports.insert = (db) => {
-  const stmt = db.prepare(`
-    INSERT OR IGNORE
-    INTO spr (
-      id, parent_id, name, placetype, country, repo, latitude, longitude,
-      min_latitude, min_longitude, max_latitude, max_longitude,
-      is_current, is_deprecated, is_ceased, is_superseded, is_superseding,
-      superseded_by, supersedes, lastmodified
-    )
-    VALUES (
-      :id, :parent_id, :name, :placetype, :country, :repo, :latitude, :longitude,
-      :min_latitude, :min_longitude, :max_latitude, :max_longitude,
-      :is_current, :is_deprecated, :is_ceased, :is_superseded, :is_superseding,
-      :superseded_by, :supersedes, :lastmodified
-    )
-  `)
+  const stmt = {
+    insert: db.prepare(`
+      INSERT OR IGNORE
+      INTO spr (
+        id, parent_id, name, placetype, country, repo, latitude, longitude,
+        min_latitude, min_longitude, max_latitude, max_longitude,
+        is_current, is_deprecated, is_ceased, is_superseded, is_superseding,
+        superseded_by, supersedes, lastmodified
+        )
+        VALUES (
+          :id, :parent_id, :name, :placetype, :country, :repo, :latitude, :longitude,
+          :min_latitude, :min_longitude, :max_latitude, :max_longitude,
+          :is_current, :is_deprecated, :is_ceased, :is_superseded, :is_superseding,
+          :superseded_by, :supersedes, :lastmodified
+          )
+    `),
+    clean: db.prepare('DELETE FROM spr WHERE id = :id')
+  }
 
-  return (feat) => {
+  return (feat, clean = false) => {
     // table does not support alt geometries
     if (feature.isAltGeometry(feat)) { return }
 
-    stmt.run(spr(feat))
+    if (clean === true) {
+      stmt.clean.run({ id: feature.getID(feat) })
+    }
+
+    stmt.insert.run(spr(feat))
   }
 }
 

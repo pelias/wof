@@ -49,6 +49,11 @@ module.exports = {
       fs.existsSync(argv.database) && fs.unlinkSync(argv.database)
     }
 
+    // when re-importing over an existing database we need to ensure
+    // existing rows are cleanly replaced. Setting `clean=true` will
+    // ensure that `DELETE FROM ...` commands are run before inserts.
+    const clean = fs.existsSync(argv.database)
+
     // connect to database
     if (argv.verbose) { console.error(`open ${argv.database}`) }
     const db = Database(argv.database)
@@ -68,6 +73,6 @@ module.exports = {
     // create import stream
     process.stdin
       .pipe(stream.json.parse())
-      .pipe(stream.sqlite.createWriteStream(db, { alt: argv.alt }))
+      .pipe(stream.sqlite.createWriteStream(db, { alt: argv.alt, clean }))
   }
 }

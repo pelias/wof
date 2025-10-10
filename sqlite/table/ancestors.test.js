@@ -43,8 +43,9 @@ module.exports.insert = (test) => {
     const insert = ancestors.insert(db)
 
     t.equals(typeof insert, 'function')
-    t.equals(db.stmt.length, 1)
+    t.equals(db.stmt.length, 2)
     t.true(db.stmt[0].sql.includes('INSERT OR IGNORE INTO ancestors'))
+    t.true(db.stmt[1].sql.includes('DELETE FROM ancestors'))
 
     t.end()
   })
@@ -96,6 +97,36 @@ module.exports.insert = (test) => {
       ancestor_placetype: 'region',
       id: -1,
       lastmodified: -1
+    }])
+
+    t.end()
+  })
+  test('insert - using clean=true', (t) => {
+    const db = new MockDatabase()
+    const insert = ancestors.insert(db)
+
+    insert({
+      type: 'Feature',
+      properties: {
+        'wof:hierarchy': [
+          {
+            continent_id: 102191581,
+            country_id: 85632343,
+            locality_id: 101851343,
+            region_id: 85667945
+          }
+        ]
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [0, 0]
+      }
+    }, true)
+
+    // clean should be called once
+    t.equals(db.stmt[1].action.run.length, 1)
+    t.deepEquals(db.stmt[1].action.run[0], [{
+      id: -1
     }])
 
     t.end()
