@@ -12,15 +12,22 @@ module.exports.create = (db) => {
 }
 
 module.exports.insert = (db) => {
-  const stmt = db.prepare(`
-    INSERT OR IGNORE
-    INTO concordances (id, other_id, other_source, lastmodified)
-    VALUES (:id, :other_id, :other_source, :lastmodified)
-  `)
+  const stmt = {
+    insert: db.prepare(`
+      INSERT OR IGNORE
+      INTO concordances (id, other_id, other_source, lastmodified)
+      VALUES (:id, :other_id, :other_source, :lastmodified)
+    `),
+    clean: db.prepare('DELETE FROM concordances WHERE id = :id')
+  }
 
-  return (feat) => {
+  return (feat, clean = false) => {
     // table does not support alt geometries
     if (feature.isAltGeometry(feat)) { return }
+
+    if (clean === true) {
+      stmt.clean.run({ id: feature.getID(feat) })
+    }
 
     const concordances = _.get(feat, 'properties.wof:concordances', [])
 
@@ -30,7 +37,7 @@ module.exports.insert = (db) => {
     }
 
     _.each(concordances, (id, key) => {
-      stmt.run(_.extend({
+      stmt.insert.run(_.extend({
         other_id: id,
         other_source: key
       }, common))

@@ -43,8 +43,9 @@ module.exports.insert = (test) => {
     const insert = spr.insert(db)
 
     t.equals(typeof insert, 'function')
-    t.equals(db.stmt.length, 1)
+    t.equals(db.stmt.length, 2)
     t.true(db.stmt[0].sql.includes('INSERT OR IGNORE INTO spr'))
+    t.true(db.stmt[1].sql.includes('DELETE FROM spr'))
 
     t.end()
   })
@@ -82,6 +83,27 @@ module.exports.insert = (test) => {
       superseded_by: '',
       supersedes: '',
       lastmodified: -1
+    }])
+
+    t.end()
+  })
+  test('insert - using clean=true', (t) => {
+    const db = new MockDatabase()
+    const insert = spr.insert(db)
+
+    insert({
+      type: 'Feature',
+      properties: {},
+      geometry: {
+        type: 'Point',
+        coordinates: [0, 0]
+      }
+    }, true)
+
+    // clean should be called once
+    t.equals(db.stmt[1].action.run.length, 1)
+    t.deepEquals(db.stmt[1].action.run[0], [{
+      id: -1
     }])
 
     t.end()

@@ -22,21 +22,28 @@ module.exports.create = (db) => {
 }
 
 module.exports.insert = (db) => {
-  const stmt = db.prepare(`
-    INSERT OR IGNORE
-    INTO names (
-      id, placetype, country, language, extlang, script, region,
-      variant, extension, privateuse, name, lastmodified
-    )
-    VALUES (
-      :id, :placetype, :country, :language, :extlang, :script, :region,
-      :variant, :extension, :privateuse, :name, :lastmodified
-    )
-  `)
+  const stmt = {
+    insert: db.prepare(`
+      INSERT OR IGNORE
+      INTO names (
+        id, placetype, country, language, extlang, script, region,
+        variant, extension, privateuse, name, lastmodified
+        )
+        VALUES (
+          :id, :placetype, :country, :language, :extlang, :script, :region,
+          :variant, :extension, :privateuse, :name, :lastmodified
+          )
+    `),
+    clean: db.prepare('DELETE FROM names WHERE id = :id')
+  }
 
-  return (feat) => {
+  return (feat, clean = false) => {
     // table does not support alt geometries
     if (feature.isAltGeometry(feat)) { return }
+
+    if (clean === true) {
+      stmt.clean.run({ id: feature.getID(feat) })
+    }
 
     const properties = _.get(feat, 'properties', {})
 
@@ -54,7 +61,7 @@ module.exports.insert = (db) => {
       // @todo: check this is correct
       // @todo: move common functionality to lib
       _.each(names, (name) => {
-        stmt.run(_.extend({
+        stmt.insert.run(_.extend({
           language: tag.language,
           extlang: '',
           script: tag.script,

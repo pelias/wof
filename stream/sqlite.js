@@ -16,7 +16,7 @@ const options = {
 }
 
 module.exports.createWriteStream = (db, opts) => {
-  _.defaults(opts, { alt: true })
+  _.defaults(opts, { alt: true, clean: false })
 
   // generate insert statements for each table
   const stmts = _.map(table, t => t.insert(db))
