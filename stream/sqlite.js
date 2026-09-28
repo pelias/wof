@@ -39,14 +39,17 @@ module.exports.createWriteStream = (db, opts) => {
 module.exports.createReadStream = (db, opts) => {
   _.defaults(opts, { sql: 'SELECT body FROM geojson' })
 
-  const stmt = db.prepare(opts.sql)
+  // the export SQL always selects a single column; pluck mode has
+  // better-sqlite3 hand back that column's value directly instead of a
+  // row object, avoiding a per-row object allocation and lookup
+  const stmt = db.prepare(opts.sql).pluck(true)
   const iterator = stmt.iterate()
 
   return miss.from(options.read, (size, next) => {
     var ok = true
     while (ok) {
       const elt = iterator.next()
-      if (!elt.done) { ok = next(null, _.find(elt.value)) } else { next(null, null); break }
+      if (!elt.done) { ok = next(null, elt.value) } else { next(null, null); break }
     }
   })
 }
