@@ -16,6 +16,10 @@
     "validate": "npm ls",
     "lint": "jshint ."
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pelias/wof.git"
+  },
   "author": "pelias",
   "license": "MIT",
   "dependencies": {
